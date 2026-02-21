@@ -9,8 +9,8 @@ import { MapHeader } from "./MapHeader";
 
 interface PlaceSheetProps {
   places: Place[];
-  selectedPlaceId: number | null;
-  onSelect: (id: number | null) => void;
+  selectedPlace: Place | null;
+  onSelect: (place: Place | null) => void;
   onClose: () => void;
   isLoading: boolean;
   isError: boolean;
@@ -21,14 +21,13 @@ const sheetTransition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const };
 
 export function PlaceSheet({
   places,
-  selectedPlaceId,
+  selectedPlace,
   onSelect,
   onClose,
   isLoading,
   isError,
   sidebarControls,
 }: PlaceSheetProps) {
-  const selectedPlace = places.find((p) => p.id === selectedPlaceId) || null;
 
   const renderContent = () => {
     if (isLoading && places.length === 0) {
@@ -118,8 +117,8 @@ export function PlaceSheet({
             <PlaceListItem
               key={place.id}
               place={place}
-              isSelected={place.id === selectedPlaceId}
-              onClick={() => onSelect(place.id)}
+              isSelected={place.id === selectedPlace?.id}
+              onClick={() => onSelect(place)}
             />
           ))}
         </div>

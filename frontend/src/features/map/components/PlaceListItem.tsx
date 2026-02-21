@@ -1,6 +1,7 @@
 import { MapPin, Star, ChevronRight } from 'lucide-react'
 import type { Place } from '@/types/place'
 import { cn } from '@/lib/utils/cn'
+import { useMapStore } from '../state/mapStore'
 
 interface PlaceListItemProps {
   place: Place
@@ -9,9 +10,13 @@ interface PlaceListItemProps {
 }
 
 export function PlaceListItem({ place, isSelected, onClick }: PlaceListItemProps) {
+  const setHoveredId = useMapStore(state => state.setHoveredId)
+
   return (
     <button
       onClick={onClick}
+      onMouseEnter={() => setHoveredId(place.id)}
+      onMouseLeave={() => setHoveredId(null)}
       className={cn(
         "group relative w-full rounded-2xl border bg-card p-4 text-left transition-all duration-200 hover:shadow-md",
         isSelected 

@@ -1,14 +1,15 @@
-import { useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
+import { useEffect, useMemo, useRef } from 'react'
+import { Tooltip, MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
 import L, { type Map } from 'leaflet'
 import Supercluster from 'supercluster'
+import { Star } from 'lucide-react'
 import type { BBox, Place } from '@/types/place'
 import { CLUSTER_RADIUS, DEFAULT_CENTER, DEFAULT_ZOOM, MAP_ATTRIBUTION, MAP_TILE_URL, MAX_ZOOM } from '@/lib/config/map'
+import { useMapStore } from '../state/mapStore'
 
 interface PlacesMapProps {
   places: Place[]
-  selectedPlaceId: number | null
-  onSelect: (id: number) => void
+  selectedPlace: Place | null
   onViewportChange: (bbox: BBox, zoom: number) => void
   userLocation: { lat: number; lng: number } | null
   onMapReady?: (map: Map) => void
@@ -16,8 +17,7 @@ interface PlacesMapProps {
 
 export function PlacesMap({
   places,
-  selectedPlaceId,
-  onSelect,
+  selectedPlace,
   onViewportChange,
   userLocation,
   onMapReady,
@@ -44,8 +44,7 @@ export function PlacesMap({
         {userLocation && <UserMarker position={userLocation} />}
         <ClusterLayer
           places={places}
-          selectedPlaceId={selectedPlaceId}
-          onSelect={onSelect}
+          selectedPlace={selectedPlace}
         />
       </MapContainer>
     </div>
@@ -57,6 +56,8 @@ function ViewportTracker({
 }: {
   onViewportChange: (bbox: BBox, zoom: number) => void
 }) {
+  const map = useMap()
+  
   const notify = () => {
     const bounds = map.getBounds()
     const bbox: BBox = [
@@ -71,7 +72,7 @@ function ViewportTracker({
 
   const debounceNotify = debounce(notify, 350)
 
-  const map = useMapEvents({
+  useMapEvents({
     moveend: debounceNotify,
     zoomend: debounceNotify,
   })
@@ -86,46 +87,54 @@ function ViewportTracker({
 
 function ClusterLayer({
   places,
-  selectedPlaceId,
-  onSelect,
+  selectedPlace,
 }: {
   places: Place[]
-  selectedPlaceId: number | null
-  onSelect: (id: number) => void
+  selectedPlace: Place | null
 }) {
   const map = useMap()
-  const bounds = map.getBounds()
-  const zoom = map.getZoom()
-  const bbox: BBox = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()]
+  const { mapViewport, setSelected, hoveredPlaceId, setHoveredId } = useMapStore((state) => ({
+    mapViewport: state.mapViewport,
+    setSelected: state.setSelected,
+    hoveredPlaceId: state.hoveredPlaceId,
+    setHoveredId: state.setHoveredId,
+  }))
 
-  const points = places.map((place) => ({
+  const points = useMemo(() => places.map((place) => ({
     type: 'Feature' as const,
     properties: {
       cluster: false,
       placeId: place.id,
       name: place.name,
+      rating: place.rating,
       address: place.address,
     },
     geometry: {
       type: 'Point' as const,
       coordinates: [place.lon, place.lat],
     },
-  }))
+  })), [places])
 
-  const index = new Supercluster({
-    radius: CLUSTER_RADIUS,
-    maxZoom: MAX_ZOOM,
-  })
+  const index = useMemo(() => {
+    const si = new Supercluster({
+      radius: CLUSTER_RADIUS,
+      maxZoom: MAX_ZOOM,
+    })
+    si.load(points)
+    return si
+  }, [points])
 
-  index.load(points)
-
-  const clusters = index.getClusters(bbox, Math.floor(zoom)) as Array<
-    Supercluster.ClusterFeature<any> | Supercluster.PointFeature<any>
-  >
+  // Use mapViewport from store to keep clusters stable during hover re-renders
+  const clusters = useMemo(() => {
+    if (!mapViewport.bbox) return []
+    return index.getClusters(mapViewport.bbox, Math.floor(mapViewport.zoom)) as Array<
+      Supercluster.ClusterFeature<any> | Supercluster.PointFeature<any>
+    >
+  }, [index, mapViewport.bbox, mapViewport.zoom])
 
   return (
     <>
-      {clusters.map((feature) => {
+      {clusters.map((feature: Supercluster.ClusterFeature<any> | Supercluster.PointFeature<any>) => {
         const [lng, lat] = feature.geometry.coordinates
         const { cluster: isCluster, point_count: pointCount } = feature.properties as any
 
@@ -148,19 +157,60 @@ function ClusterLayer({
           )
         }
 
-        const placeId = (feature.properties as any).placeId as number
-        const isSelected = placeId === selectedPlaceId
+        const props = feature.properties
+        const placeId = props.placeId as number
+        const isSelected = placeId === selectedPlace?.id
+        const isHovered = placeId === hoveredPlaceId
+
         return (
           <Marker
             key={String(placeId)}
             position={[lat, lng]}
-            icon={createPlaceIcon(isSelected)}
+            icon={createPlaceIcon(isSelected, isHovered)}
             eventHandlers={{
-              click: () => {
-                onSelect(placeId)
+              click: (e) => {
+                console.log('Marker clicked:', placeId);
+                // Leaflet events use originalEvent for DOM event
+                L.DomEvent.stopPropagation(e.originalEvent || e)
+                const place = places.find(p => p.id === placeId)
+                if (place) {
+                  console.log('Setting selected place:', place.name);
+                  setSelected(place);
+                } else {
+                  console.warn('Place not found for ID:', placeId);
+                }
+              },
+              mouseover: () => {
+                console.log('Marker hover start:', placeId);
+                setHoveredId(placeId);
+              },
+              mouseout: () => {
+                console.log('Marker hover end');
+                setHoveredId(null);
               },
             }}
-          />
+          >
+            {isHovered && (
+              <Tooltip 
+                direction="top" 
+                offset={[0, -32]} 
+                opacity={1} 
+                permanent={true}
+                interactive={false}
+                className="custom-tooltip"
+              >
+                <div className="flex items-center gap-2 px-1">
+                  <span className="font-bold text-sm tracking-tight">{props.name}</span>
+                  {props.rating && (
+                    <div className="flex items-center gap-0.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700">
+                      <Star className="h-2.5 w-2.5 fill-current" />
+                      {props.rating.toFixed(1)}
+                    </div>
+                  )}
+                </div>
+              </Tooltip>
+            )}
+          </Marker>
         )
       })}
     </>
@@ -185,13 +235,13 @@ function createClusterIcon(count: number) {
   })
 }
 
-function createPlaceIcon(selected: boolean) {
+function createPlaceIcon(selected: boolean, hovered: boolean) {
   const base = `
-    <div class="relative flex items-center justify-center">
-      <div class="rounded-full bg-white shadow-md p-[6px] ${selected ? 'selected-marker' : ''}">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${selected ? '#0ea5e9' : '#0f172a'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <div class="relative flex items-center justify-center" style="width: 40px; height: 40px;">
+      <div class="rounded-full bg-white shadow-xl p-[6px] border-2 ${selected ? 'border-primary' : 'border-background'} ${hovered ? 'marker-hover-glow marker-bounce' : ''} transition-all duration-300">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${selected || hovered ? '#0ea5e9' : '#0f172a'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 21c-4-4.5-6-7.5-6-10a6 6 0 1 1 12 0c0 2.5-2 5.5-6 10z"/>
-          <circle cx="12" cy="11" r="2.5" ${selected ? 'fill="#0ea5e9" opacity="0.15"' : ''}/>
+          <circle cx="12" cy="11" r="2.5" ${selected || hovered ? 'fill="#0ea5e9" opacity="0.15"' : ''}/>
         </svg>
       </div>
     </div>
@@ -199,17 +249,22 @@ function createPlaceIcon(selected: boolean) {
 
   return L.divIcon({
     html: base,
-    className: selected ? 'scale-110 transition-transform' : '',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -28],
+    className: 'custom-place-icon',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
   })
 }
 
 function MapReady({ onReady }: { onReady?: (map: Map) => void }) {
   const map = useMap()
+  const hasCalledOnReady = useRef(false)
+
   useEffect(() => {
-    if (map && onReady) onReady(map)
+    if (map && onReady && !hasCalledOnReady.current) {
+      onReady(map)
+      hasCalledOnReady.current = true
+    }
   }, [map, onReady])
   return null
 }

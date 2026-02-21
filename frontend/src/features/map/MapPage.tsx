@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Map } from 'leaflet'
 import { toast } from 'sonner'
 import { AlertTriangle } from 'lucide-react'
@@ -19,7 +19,7 @@ function MapPage() {
   const {
     activeType,
     autoRefresh,
-    selectedPlaceId,
+    selectedPlace,
     mapViewport,
     setSelected,
     setAutoRefresh,
@@ -27,7 +27,7 @@ function MapPage() {
   } = useMapStore((state) => ({
     activeType: state.activeType,
     autoRefresh: state.autoRefresh,
-    selectedPlaceId: state.selectedPlaceId,
+    selectedPlace: state.selectedPlace,
     mapViewport: state.mapViewport,
     setSelected: state.setSelected,
     setAutoRefresh: state.setAutoRefresh,
@@ -65,11 +65,6 @@ function MapPage() {
     }
   }, [geolocationStatus, userLocation, mapInstance])
 
-  const selectedPlace = useMemo(
-    () => places.find((p) => p.id === selectedPlaceId) || null,
-    [places, selectedPlaceId],
-  )
-
   useEffect(() => {
     if (!mapInstance || !selectedPlace) return
     const isMobile = window.innerWidth < 1024
@@ -95,7 +90,7 @@ function MapPage() {
         <div className="relative z-10 h-full w-full lg:pr-[360px]">
           <PlacesMap
             places={places}
-            selectedPlaceId={selectedPlaceId}
+            selectedPlace={selectedPlace}
             onSelect={setSelected}
             onViewportChange={handleViewportChange}
             userLocation={userLocation}
@@ -134,7 +129,7 @@ function MapPage() {
 
         <PlaceSheet
           places={places}
-          selectedPlaceId={selectedPlaceId}
+          selectedPlace={selectedPlace}
           onSelect={setSelected}
           onClose={() => setSelected(null)}
           isLoading={isFetching}
