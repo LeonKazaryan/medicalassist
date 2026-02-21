@@ -1,120 +1,107 @@
-# Datasaur 2026 | Qazcode Challenge
+# 🏥 QazCode Medical AI Assistant
 
-## Medical Diagnosis Assistant: Symptoms → ICD-10
-
-An AI-powered clinical decision support system that converts patient symptoms into structured diagnoses with ICD-10 codes, built on Kazakhstan clinical protocols.
+> An AI-powered Clinical Decision Support System (CDSS) that maps patient symptoms to official Kazakhstan Clinical Protocols and ICD-10 codes with high precision.
 
 ---
 
-## Challenge Overview
+## 🧠 AI Core: Hybrid Clinical RAG System
 
-Participants will build an MVP product where users input symptoms as free text and receive:
+Our solution uses a **multi-stage reasoning pipeline** designed to bridge the gap between patient complaints (unstructured text) and official clinical protocols (structured medical knowledge).
 
-- **Top-N probable diagnoses** ranked by likelihood
-- **ICD-10 codes** for each diagnosis
-- **Brief clinical explanations** based on official Kazakhstan protocols
+### 🏗 Architecture Breakdown
 
-The solution **must** run **using GPT-OSS** — no external LLM API calls allowed. Refer to `notebooks/llm_api_examples.ipynb`
+#### 1. Input Processing & Clinical NER
+The user's raw text is processed by an LLM (**Gemini 1.5 Flash**) to extract specific clinical entities (symptoms, duration, negations).
+*   **Goal:** Transform *"my tummy hurts on the right"* $\to$ `"abdominal pain, right upper quadrant, acute onset"`.
 
----
-## Data Sources
+#### 2. Dual-Path Retrieval (Hybrid Search)
+We perform two parallel vector searches in **Qdrant**:
+*   **Path A:** Query using the **Raw User Text** (captures context and emotion).
+*   **Path B:** Query using the **Medical Summary** (captures strict terminology).
+*   **Embedding Model:** `intfloat/multilingual-e5-small` (optimized for Russian language).
 
-### Kazakhstan Clinical Protocols
-Official clinical guidelines serving as the primary knowledge base for diagnoses and diagnostic criteria.[[corpus.zip](https://github.com/user-attachments/files/25365231/corpus.zip)]
+#### 3. Heuristic Re-ranking (Boosting Engine)
+Search results are re-ranked based on a custom scoring algorithm:
+*   🔥 **Title Match:** Heavy boost if protocol title words appear in the query.
+*   🎯 **ICD-10 Match:** Critical boost if a specific ICD code is mentioned.
+*   *Result:* This ensures that protocols like "HELLP Syndrome" rank higher than generic "Pregnancy Complications" when symptoms match perfectly.
 
-Data Format
-
-```json
-{"protocol_id": "p_d57148b2d4", "source_file": "HELLP-СИНДРОМ.pdf", "title": "Одобрен", "icd_codes": ["O00", "O99"], "text": "Одобрен Объединенной комиссией по качеству медицинских услуг Министерства здравоохранения Республики Казахстан от «13» января 2023 года Протокол №177 КЛИНИЧЕСКИЙ ПРОТОКОЛ ДИАГНОСТИКИ И ЛЕЧЕНИЯ HELLP-СИНДРОМ I. ВВОДНАЯ ЧАСТЬ 1.1 Код(ы) МКБ-10: Код МКБ-10 O00-O99 Беременность, роды и послеродовой период О14.2 HELLP-синдром 1.2 Дата разработки/пересмотра протокола: 2022 год. ..."}
-
-```
-
----
-
-## Evaluation
-
-### Metrics
-- **Primary metrics:** Accuracy@1, Recall@3, Latency
-- **Test set:**: Dataset with cases (`data/test_set`), use `query` and `gt` fields.
-- **Holdout set:** Private test cases (not included in this repository)
-
-### Product Evaluation
-Working demo interface: user inputs symptoms → system returns diagnoses with ICD-10 codes;
+#### 4. Reasoning & Validation
+*   The **Top-4 unique protocols** are assembled into a context window.
+*   The LLM acts as a **Clinical Coder**, selecting the most appropriate diagnosis and explaining the reasoning based *only* on the provided context.
+*   🛡 **Self-Correction:** If the LLM fails to output a strict JSON or hallucinates an ICD code, a robust fallback mechanism extracts the most probable code directly from the protocol metadata.
 
 ---
-## Getting Started
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/dair-mus/hack-nu.git
-cd hack-nu
-```
+## 📊 Performance & Examples
 
-### 2. Set up the environment
-We kindly ask you to use `uv` as your Python package manager.
+*Tested configuration: Gemini 1.5 Flash (via API).*  
+*Note: Due to API Rate Limits, validation was performed on subsets of the dataset.*
 
-Make sure that `uv` is installed. Refer to [uv documentation](https://docs.astral.sh/uv/getting-started/installation/)
+| Input Query (Snippet) | Clinical NER Extraction | Retrieved Protocol (Top-1) | Final Diagnosis |
+| :--- | :--- | :--- | :--- |
+| *"сильные боли в животе справа, тошнота, 34 неделя беременности..."* | Беременность 34 нед, интенсивный болевой синдром в правой половине живота, тошнота. | **HELLP-СИНДРОМ** | **O14.2** — HELLP-синдром |
+| *"Сыну 6 лет... шунт из-за жидкости... рвёт натощак... косит глазиком..."* | Гидроцефалия, шунт, рвота натощак, фоточувствительность, парез взгляда, атаксия. | **ГИДРОЦЕФАЛИЯ І** | **G91.1** — Обструктивная гидроцефалия |
+| *"Вчера вечером резко знобить начало, температура 39... голову распирает..."* | Острое начало, гипертермия 39°C, цефалгия, рвота, фотофобия, ригидность мышц. | **Менингококковая инфекция** | **A39.0** — Менингококковый менингит |
 
-```bash
-uv venv
-source .venv/bin/activate
-uv sync
-```
-
-### 3. Running validation
-You can use `src/mock_server.py` as an example service. (however, it has no web UI, only an endpoint for eval). 
-```bash
-uv run uvicorn src.mock_server:app --host 127.0.0.1 --port 8000
-```
-Then run the validation pipeline in a separate terminal:
-```bash
-uv run python evaluate.py -e http://127.0.0.1:8000/diagnose -d ./data/test_set -n <your_team_name>
-```
-`-e`: endpoint (POST request) that will accept the symptoms
-
-`-d`: path to the directory with protocols
-
-`-n`: name of your team (please avoid special symbols)
-
-By default, the evalutaion results will be output to `data/evals`.
-
-### Docker
-We prepared a Dockerfile to run our mock server example.
-```bash
-docker build -t mock-server .
-docker run -p 8000:8000 mock-server
-```
-Then run the validation as shown above.
-
-Feel free to use the mock-server FastAPI template and Dockerfile structure to build your own project around.
-
-Remember to adjust the CMD in Dockerfile for your real Python server instead of `src.mock_server:app` before submission. 
-
-### Submission Checklist
-
-- [ ] Everything packed into a single project (application, models, vector DB, indexes)
-- [ ] Image builds successfully: `docker build -t submission .`
-- [ ] Container starts and serves on port 8080: `docker run -p 8080:8080 submission`
-- [ ] Web UI accepts free-text symptoms input
-- [ ] Endpoint for POST requests accepts free-text symptoms
-- [ ] Returns top-N diagnoses with ICD-10 codes
-- [ ] No external network calls during inference
-- [ ] README with build and run instructions
-
-### How to Submit
-
-1. Provide a Git repository with `Dockerfile`
-2. Submit the link via [submission form](https://docs.google.com/forms/d/e/1FAIpQLSe8qg6LsgJroHf9u_MVDBLPqD8S_W6MrphAteRqG-c4cqhQDw/viewform)
-3. We will pull, build, and run your container on the private holdout set
 ---
 
-### Repo structure
-- `data/evals`: evaluation results directory
-- `data/examples/response.json`: example of a JSON response from your project endpoint
-- `data/test_set`: use these to evaluate your solution. 
-- `notebooks/llm_api_examples.ipynb`: shows how to make a request to GPT-OSS.
-- `src/`: solution source code would go here, has a `mock_server.py` as an entrypoint example.
-- `evaluate.py`: runs the given dataset through the provided endpoint.
-- `pyproject.toml`: describes dependencies of the project.
-- `uv.lock`: stores the exact dependency versions, autogenerated by uv.
-- `Dockerfile`: contains build instructions for a Docker image.
+## 🚀 Getting Started
+
+### Prerequisites
+*   Python 3.11+
+*   `uv` package manager (recommended)
+*   Docker (optional)
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/YourTeam/medical-ai.git
+    cd medical-ai
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    uv sync
+    source .venv/bin/activate
+    ```
+
+3.  **Setup Environment:**
+    Create a `.env` file in the root directory:
+    ```text
+    GEMINI_API_KEY_1=your_key_here
+    GEMINI_API_KEY_2=your_key_here
+    ```
+
+### Running the System
+
+1.  **Build the Knowledge Base (Ingest):**
+    This script parses protocols and builds the local Qdrant index.
+    ```bash
+    uv run python src/ai/ingest.py
+    ```
+
+2.  **Start the AI Server:**
+    ```bash
+    uv run python src/ai/main.py
+    ```
+    *Server will start at `http://0.0.0.0:8000`*
+
+3.  **Test with a Query:**
+    ```bash
+    curl -X POST http://localhost:8000/diagnose \
+         -H "Content-Type: application/json" \
+         -d '{"text": "сильные боли в животе, 34 неделя"}'
+    ```
+
+### 🐳 Docker Deployment
+
+The Docker image automatically downloads models and builds the vector database upon build.
+
+```bash
+# Build the image
+docker build -t medical-ai .
+
+# Run the container (pass your API keys!)
+docker run -p 8000:8000 --env-file .env medical-ai
