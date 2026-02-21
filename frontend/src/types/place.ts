@@ -3,10 +3,10 @@ export type PlaceType = 'pharmacy' | 'clinic'
 export type BBox = [number, number, number, number] // [minLng, minLat, maxLng, maxLat]
 
 export interface Place {
-  id: string
+  id: number
   name: string
   lat: number
-  lng: number
+  lon: number
   address: string
   rating: number | null
   reviewsCount: number | null

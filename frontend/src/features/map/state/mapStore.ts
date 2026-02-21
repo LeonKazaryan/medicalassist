@@ -6,13 +6,13 @@ type GeolocationStatus = 'idle' | 'loading' | 'granted' | 'denied' | 'error'
 interface MapState {
   activeType: PlaceType
   autoRefresh: boolean
-  selectedPlaceId: string | null
+  selectedPlaceId: number | null
   userLocation: { lat: number; lng: number } | null
   geolocationStatus: GeolocationStatus
   mapViewport: ViewportState
   setType: (type: PlaceType) => void
   setAutoRefresh: (value: boolean) => void
-  setSelected: (id: string | null) => void
+  setSelected: (id: number | null) => void
   setUserLocation: (coords: { lat: number; lng: number } | null) => void
   setGeolocationStatus: (status: GeolocationStatus) => void
   setViewport: (viewport: Partial<ViewportState>) => void

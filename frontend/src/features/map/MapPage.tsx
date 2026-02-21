@@ -3,7 +3,6 @@ import type { Map } from 'leaflet'
 import { toast } from 'sonner'
 import { AlertTriangle } from 'lucide-react'
 import { GlobalHeader } from '@/components/common/GlobalHeader'
-import { MapHeader } from './components/MapHeader'
 import { MapControls } from './components/MapControls'
 import { PlaceSheet } from './components/PlaceSheet'
 import { PlacesMap } from './components/PlacesMap'
@@ -75,7 +74,7 @@ function MapPage() {
     if (!mapInstance || !selectedPlace) return
     const isMobile = window.innerWidth < 1024
     const targetZoom = Math.max(mapInstance.getZoom(), 15)
-    mapInstance.flyTo([selectedPlace.lat, selectedPlace.lng], targetZoom, { duration: 0.4 })
+    mapInstance.flyTo([selectedPlace.lat, selectedPlace.lon], targetZoom, { duration: 0.4 })
     if (isMobile) {
       mapInstance.panBy([0, -120], { animate: true, duration: 0.25 })
     }
@@ -92,8 +91,7 @@ function MapPage() {
   return (
     <div className="relative min-h-screen bg-background">
       <GlobalHeader />
-      <MapHeader />
-      <div className="relative flex h-[calc(100vh-120px)] w-full">
+      <div className="relative flex h-[calc(100vh-64px)] w-full">
         <div className="relative z-10 h-full w-full lg:pr-[360px]">
           <PlacesMap
             places={places}
@@ -103,14 +101,18 @@ function MapPage() {
             userLocation={userLocation}
             onMapReady={setMapInstance}
           />
-          <MapControls
-            autoRefresh={autoRefresh}
-            onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
-            onLocate={handleLocate}
-            onRefresh={() => refetch()}
-            showRefresh={!autoRefresh}
-            isRefreshing={isFetching}
-          />
+          {/* Mobile controls (overlay) */}
+          <div className="lg:hidden">
+            <MapControls
+              autoRefresh={autoRefresh}
+              onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
+              onLocate={handleLocate}
+              onRefresh={() => refetch()}
+              showRefresh={!autoRefresh}
+              isRefreshing={isFetching}
+              variant="overlay"
+            />
+          </div>
           <MapOverlays isLoading={isFetching} isError={isError} isEmpty={isEmpty} />
 
           {geolocationStatus === 'denied' && (
@@ -120,9 +122,9 @@ function MapPage() {
                   <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold">Location disabled</p>
+                  <p className="text-sm font-semibold">Геолокация отключена</p>
                   <p className="text-sm text-muted-foreground">
-                    Showing default area. Enable location for better results.
+                    Показана область по умолчанию. Включите геолокацию для точных результатов.
                   </p>
                 </div>
               </div>
@@ -137,6 +139,17 @@ function MapPage() {
           onClose={() => setSelected(null)}
           isLoading={isFetching}
           isError={isError}
+          sidebarControls={
+            <MapControls
+              autoRefresh={autoRefresh}
+              onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)}
+              onLocate={handleLocate}
+              onRefresh={() => refetch()}
+              showRefresh={!autoRefresh}
+              isRefreshing={isFetching}
+              variant="sidebar"
+            />
+          }
         />
       </div>
     </div>

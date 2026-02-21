@@ -15,9 +15,9 @@ export function PlaceCard({ place, compact }: PlaceCardProps) {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(place.address)
-      toast.success('Address copied')
+      toast.success('Адрес скопирован')
     } catch {
-      toast.error('Could not copy')
+      toast.error('Не удалось скопировать')
     }
   }
 
@@ -44,7 +44,7 @@ export function PlaceCard({ place, compact }: PlaceCardProps) {
                 )}
               </div>
             ) : (
-              <Badge variant="secondary" className="text-[11px]">No rating</Badge>
+              <Badge variant="secondary" className="text-[11px]">Нет рейтинга</Badge>
             )}
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCopy}>
               <Copy className="h-4 w-4" />
@@ -65,13 +65,13 @@ export function PlaceCard({ place, compact }: PlaceCardProps) {
               >
                 <a href={`tel:${phone}`}>
                   <Phone className="h-4 w-4" />
-                  Call {place.phones.length > 1 ? `${idx + 1}` : ''}
+                  Позвонить {place.phones.length > 1 ? `${idx + 1}` : ''}
                   <span className="ml-2 text-muted-foreground">{phone}</span>
                 </a>
               </Button>
             ))
           ) : (
-            <p className="text-sm text-muted-foreground">No phone available</p>
+            <p className="text-sm text-muted-foreground">Телефон не указан</p>
           )}
         </div>
       </CardContent>
