@@ -122,9 +122,9 @@ function MapPage() {
                   <AlertTriangle className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold">Location disabled</p>
+                  <p className="text-sm font-semibold">Геолокация отключена</p>
                   <p className="text-sm text-muted-foreground">
-                    Showing default area. Enable location for better results.
+                    Показана область по умолчанию. Включите геолокацию для точных результатов.
                   </p>
                 </div>
               </div>

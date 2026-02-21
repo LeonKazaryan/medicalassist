@@ -61,7 +61,7 @@ export function MapControls({
             disabled={isRefreshing}
           >
             <RefreshCcw className={cn('mr-2 h-4 w-4', isRefreshing && 'animate-spin')} />
-            Refresh area
+            Обновить область
           </Button>
         )}
 
@@ -75,7 +75,7 @@ export function MapControls({
           onClick={onToggleAutoRefresh}
         >
           <Power className="mr-2 h-4 w-4" />
-          Auto-refresh {autoRefresh ? 'ON' : 'OFF'}
+          Автообновление {autoRefresh ? 'Вкл' : 'Выкл'}
         </Button>
       </div>
     </div>

@@ -17,7 +17,7 @@ export function MapOverlays({ isLoading, isError, isEmpty }: MapOverlaysProps) {
             exit={{ opacity: 0, y: -6, transition: { duration: 0.16 } }}
             className="pointer-events-auto rounded-full bg-background/90 px-4 py-2 text-sm font-medium shadow-lg ring-1 ring-border backdrop-blur"
           >
-            Поиск по близости...
+            Ищем поблизости...
           </motion.div>
         )}
       </AnimatePresence>
@@ -43,7 +43,7 @@ export function MapOverlays({ isLoading, isError, isEmpty }: MapOverlaysProps) {
             exit={{ opacity: 0, y: -6, transition: { duration: 0.16 } }}
             className="pointer-events-auto rounded-full bg-destructive/10 px-4 py-2 text-sm font-medium text-destructive shadow-lg ring-1 ring-destructive/40 backdrop-blur"
           >
-            Не удалось загрузить нужные места. Повторите попытку.
+            Не удалось загрузить места. Повторите попытку.
           </motion.div>
         )}
       </AnimatePresence>

@@ -10,7 +10,7 @@ export function MapHeader() {
   }));
 
   const handleDisabledClick = () => {
-    toast.info("Clinics coming soon");
+    toast.info("Клиники скоро будут");
   };
 
   return (
@@ -18,9 +18,9 @@ export function MapHeader() {
       <div className="flex items-center gap-4 px-4 py-3">
         <div>
           <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">
-            Map
+            Карта
           </p>
-          <h1 className="text-lg font-semibold leading-5">Nearby</h1>
+          <h1 className="text-lg font-semibold leading-5">Рядом</h1>
         </div>
 
         <ToggleGroup

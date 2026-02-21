@@ -45,7 +45,7 @@ export function PlaceSheet({
             <div className="sheet-handle" />
             <div className="flex items-center justify-between px-4 pb-2">
               <p className="text-sm font-medium text-muted-foreground">
-                Selected place
+                Выбранное место
               </p>
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="h-5 w-5" />
@@ -55,7 +55,7 @@ export function PlaceSheet({
               <PlaceCard place={selectedPlace} />
               <div className="mt-4">
                 <h4 className="mb-2 text-sm font-medium text-muted-foreground">
-                  Visible pharmacies
+                  Аптеки в области
                 </h4>
                 <div className="space-y-2">
                   {places.map((place) => (
@@ -99,7 +99,7 @@ export function PlaceSheet({
                   <PlaceCard place={selectedPlace} />
                   <div className="mt-4">
                     <h4 className="mb-2 text-sm font-medium text-muted-foreground">
-                      Visible pharmacies
+                      Аптеки в области
                     </h4>
                     <div className="space-y-2">
                       {places.map((place) => (
@@ -130,10 +130,10 @@ export function PlaceSheet({
                   className="flex h-full items-center justify-center px-6 text-center text-sm text-muted-foreground"
                 >
                   {isLoading
-                    ? "Searching nearby pharmacies..."
+                    ? "Ищем аптеки поблизости..."
                     : isError
-                      ? "Не удалось загрузить нужные места. Повторите попытку."
-                      : "Select a marker to view details."}
+                      ? "Не удалось загрузить места. Повторите попытку."
+                      : "Выберите точку на карте, чтобы увидеть детали."}
                 </motion.div>
               )}
             </AnimatePresence>
