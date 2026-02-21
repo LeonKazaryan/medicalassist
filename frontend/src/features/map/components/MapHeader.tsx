@@ -9,10 +9,6 @@ export function MapHeader() {
     setType: state.setType,
   }));
 
-  const handleDisabledClick = () => {
-    toast.info("Клиники скоро будут");
-  };
-
   return (
     <header className="border-b bg-background/90 backdrop-blur">
       <div className="flex items-center gap-4 px-4 py-3">
@@ -27,11 +23,7 @@ export function MapHeader() {
           type="single"
           value={activeType}
           onValueChange={(val) => {
-            if (val === "clinic") {
-              handleDisabledClick();
-              return;
-            }
-            if (val) setType(val as "pharmacy");
+            if (val) setType(val as "pharmacy" | "clinic");
           }}
           className="rounded-lg bg-muted/60 p-1"
         >
@@ -46,10 +38,10 @@ export function MapHeader() {
           </ToggleGroupItem>
           <ToggleGroupItem
             value="clinic"
-            className="relative min-w-[110px] opacity-60"
-            onClick={handleDisabledClick}
-            aria-disabled
-            disabled
+            className={cn(
+              "px-4 font-medium data-[state=on]:bg-background data-[state=on]:shadow-sm",
+              "min-w-[110px]",
+            )}
           >
             Клиники
           </ToggleGroupItem>

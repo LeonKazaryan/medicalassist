@@ -5,13 +5,19 @@ import { MapPin, Phone, Star, Copy, ExternalLink } from 'lucide-react'
 import type { Place } from '@/types/place'
 import { cn } from '@/lib/utils/cn'
 import { toast } from 'sonner'
+import { useMapStore } from "../state/mapStore";
+import { PLACE_LABELS } from "../utils/labels";
 
 interface PlaceCardProps {
   place: Place
   compact?: boolean
 }
 
+
 export function PlaceCard({ place, compact }: PlaceCardProps) {
+  const activeType = useMapStore((state) => state.activeType);
+  const labels = PLACE_LABELS[activeType];
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(place.address)
@@ -35,7 +41,7 @@ export function PlaceCard({ place, compact }: PlaceCardProps) {
           <div className="space-y-1.5 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary text-[10px] uppercase tracking-wider font-bold">
-                Аптека
+                {labels.singular}
               </Badge>
               {place.rating && (
                 <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-600 border border-amber-100/50">

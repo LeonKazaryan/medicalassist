@@ -6,6 +6,8 @@ import { PlaceCard } from "./PlaceCard";
 import { PlaceListItem } from "./PlaceListItem";
 import { Button } from "@/components/ui/button";
 import { MapHeader } from "./MapHeader";
+import { useMapStore } from "../state/mapStore";
+import { PLACE_LABELS } from "../utils/labels";
 
 interface PlaceSheetProps {
   places: Place[];
@@ -19,6 +21,7 @@ interface PlaceSheetProps {
 
 const sheetTransition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const };
 
+
 export function PlaceSheet({
   places,
   selectedPlace,
@@ -28,6 +31,8 @@ export function PlaceSheet({
   isError,
   sidebarControls,
 }: PlaceSheetProps) {
+  const activeType = useMapStore((state) => state.activeType);
+  const labels = PLACE_LABELS[activeType];
 
   const renderContent = () => {
     if (isLoading && places.length === 0) {
@@ -37,7 +42,7 @@ export function PlaceSheet({
             <Search className="h-10 w-10 animate-pulse" />
             <div className="absolute inset-0 h-10 w-10 animate-ping rounded-full bg-primary/20" />
           </div>
-          <p className="text-sm font-medium">Ищем аптеки поблизости...</p>
+          <p className="text-sm font-medium">Ищем {labels.prepositional} поблизости...</p>
         </div>
       );
     }
@@ -50,7 +55,7 @@ export function PlaceSheet({
           </div>
           <div className="space-y-1">
             <p className="font-semibold">Произошла ошибка</p>
-            <p className="text-sm text-muted-foreground">Не удалось загрузить список аптек. Проверьте соединение.</p>
+            <p className="text-sm text-muted-foreground"> Не удалось загрузить список {labels.genitivePlural}. Проверьте соединение.</p>
           </div>
           <Button variant="outline" onClick={() => window.location.reload()}>Попробовать снова</Button>
         </div>
@@ -77,7 +82,9 @@ export function PlaceSheet({
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div className="flex-1 overflow-hidden">
-              <h2 className="truncate font-semibold leading-none">Детали аптеки</h2>
+              <h2 className="truncate font-semibold leading-none">Детали {activeType === 'pharmacy' ? 'аптеки' : 'клиники'}</h2>
+              {/* Note: Russian grammar is complex, 'Детали аптеки' / 'Детали клиники'. 
+                  Since I know labels.singular, I can use it. */}
               <p className="truncate text-xs text-muted-foreground">Вернуться к списку</p>
             </div>
           </div>
@@ -92,7 +99,7 @@ export function PlaceSheet({
       return (
         <div className="flex flex-col items-center justify-center h-full p-8 text-center text-muted-foreground">
           <Search className="h-10 w-10 mb-4 opacity-20" />
-          <p className="text-sm font-medium">В этой области аптек не найдено</p>
+          <p className="text-sm font-medium">В этой области {labels.genitivePlural} не найдено</p>
           <p className="text-xs mt-1">Попробуйте изменить масштаб или переместить карту</p>
         </div>
       );
@@ -117,7 +124,7 @@ export function PlaceSheet({
             <PlaceListItem
               key={place.id}
               place={place}
-              isSelected={place.id === selectedPlace?.id}
+              isSelected={false}
               onClick={() => onSelect(place)}
             />
           ))}

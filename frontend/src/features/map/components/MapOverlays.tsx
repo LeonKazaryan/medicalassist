@@ -1,4 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { useMapStore } from "../state/mapStore";
+import { PLACE_LABELS } from "../utils/labels";
 
 interface MapOverlaysProps {
   isLoading: boolean;
@@ -7,6 +9,9 @@ interface MapOverlaysProps {
 }
 
 export function MapOverlays({ isLoading, isError, isEmpty }: MapOverlaysProps) {
+  const activeType = useMapStore((state) => state.activeType);
+  const labels = PLACE_LABELS[activeType];
+
   return (
     <div className="pointer-events-none absolute left-4 top-4 z-20 flex flex-col gap-2">
       <AnimatePresence>
@@ -30,7 +35,7 @@ export function MapOverlays({ isLoading, isError, isEmpty }: MapOverlaysProps) {
             exit={{ opacity: 0, y: -6, transition: { duration: 0.16 } }}
             className="pointer-events-auto rounded-full bg-background/90 px-4 py-2 text-sm font-medium shadow-lg ring-1 ring-border backdrop-blur"
           >
-            Не найдено аптек в этой области.
+            Не найдено {labels.genitivePlural} в этой области.
           </motion.div>
         )}
       </AnimatePresence>
