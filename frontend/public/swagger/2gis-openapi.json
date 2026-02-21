@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "2GIS API (subset)",
+    "version": "1.0.0",
+    "description": "Minimal OpenAPI spec for common 2GIS endpoints: search, geocode, suggests, regions, routing. Add your `key` via the Authorize button or it will be auto-injected from Vite env if present."
+  },
+  "servers": [
+    { "url": "https://catalog.api.2gis.com" }
+  ],
+  "paths": {
+    "/3.0/items": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Search for places, companies or addresses",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}, "description": "Search query"},
+          {"name": "location", "in": "query", "required": true, "schema": {"type": "string"}, "description": "Comma-separated lon,lat or lat,lon to bias search"},
+          {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1}, "description": "Page number"},
+          {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50}, "description": "Results per page"},
+          {"name": "sort", "in": "query", "schema": {"type": "string", "enum": ["distance", "rating", "popularity"]}, "description": "Sort order"},
+          {"name": "fields", "in": "query", "schema": {"type": "string"}, "description": "Extra fields, e.g. items.geometry.centroid"}
+        ],
+        "responses": {
+          "200": {"description": "Search results"}
+        },
+        "security": [{"ApiKeyQuery": []}]
+      }
+    },
+    "/3.0/suggests": {
+      "get": {
+        "tags": ["Search"],
+        "summary": "Autocomplete suggestions",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}},
+          {"name": "location", "in": "query", "schema": {"type": "string"}, "description": "Comma-separated lon,lat or lat,lon"},
+          {"name": "types", "in": "query", "schema": {"type": "string"}, "description": "Comma-separated types like building, street, route"},
+          {"name": "page_size", "in": "query", "schema": {"type": "integer", "minimum": 1, "maximum": 50}}
+        ],
+        "responses": {
+          "200": {"description": "Suggestion list"}
+        },
+        "security": [{"ApiKeyQuery": []}]
+      }
+    },
+    "/3.0/geocode": {
+      "get": {
+        "tags": ["Geocoder"],
+        "summary": "Forward or reverse geocoding",
+        "parameters": [
+          {"name": "q", "in": "query", "schema": {"type": "string"}, "description": "Address text"},
+          {"name": "lat", "in": "query", "schema": {"type": "number"}, "description": "Latitude for reverse geocode"},
+          {"name": "lon", "in": "query", "schema": {"type": "number"}, "description": "Longitude for reverse geocode"},
+          {"name": "fields", "in": "query", "schema": {"type": "string"}, "description": "Extra fields"}
+        ],
+        "responses": {
+          "200": {"description": "Geocode results"}
+        },
+        "security": [{"ApiKeyQuery": []}]
+      }
+    },
+    "/2.0/region/search": {
+      "get": {
+        "tags": ["Regions"],
+        "summary": "Search for region metadata",
+        "parameters": [
+          {"name": "q", "in": "query", "required": true, "schema": {"type": "string"}, "description": "City/region name"},
+          {"name": "page", "in": "query", "schema": {"type": "integer", "minimum": 1}}
+        ],
+        "responses": {
+          "200": {"description": "Region results"}
+        },
+        "security": [{"ApiKeyQuery": []}]
+      }
+    },
+    "/carrouting/6.0.0/global": {
+      "post": {
+        "tags": ["Routing"],
+        "summary": "Build a route",
+        "servers": [{"url": "https://routing.api.2gis.com"}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {"type": "string", "enum": ["walking", "auto", "truck", "public"]},
+                        "x": {"type": "number", "description": "Longitude"},
+                        "y": {"type": "number", "description": "Latitude"}
+                      },
+                      "required": ["type", "x", "y"]
+                    },
+                    "minItems": 2
+                  }
+                },
+                "required": ["points"]
+              },
+              "example": {
+                "points": [
+                  {"type": "walking", "x": 37.62, "y": 55.75},
+                  {"type": "walking", "x": 37.64, "y": 55.77}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Route response"}
+        },
+        "security": [{"ApiKeyQuery": []}]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyQuery": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "key",
+        "description": "2GIS API key (query param `key`)"
+      }
+    }
+  }
+}
