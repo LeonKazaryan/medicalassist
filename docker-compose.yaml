@@ -1,0 +1,17 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: medical-assistant
+    image: postgres:12.2
+    environment:
+      POSTGRES_USER: "medical"
+      POSTGRES_PASSWORD: "medical"
+      POSTGRES_DB: "clinics"
+      PGDATA: /data/postgres
+    volumes:
+      - ./volumes/postgres/data:/data/postgres
+      - ./volumes/postgres/logs:/logs
+    ports:
+      - "5435:5432"
+    restart: unless-stopped

@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 @Slf4j
 @EnableFeignClients
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication
 public class MedassApplication {
 
     public static void main(String[] args) {
