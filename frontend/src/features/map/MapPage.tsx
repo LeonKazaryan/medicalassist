@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Map } from 'leaflet'
 import { toast } from 'sonner'
 import { AlertTriangle } from 'lucide-react'
+import { GlobalHeader } from '@/components/common/GlobalHeader'
 import { MapHeader } from './components/MapHeader'
 import { MapControls } from './components/MapControls'
 import { PlaceSheet } from './components/PlaceSheet'
@@ -90,8 +91,9 @@ function MapPage() {
 
   return (
     <div className="relative min-h-screen bg-background">
+      <GlobalHeader />
       <MapHeader />
-      <div className="relative flex h-[calc(100vh-64px)] w-full">
+      <div className="relative flex h-[calc(100vh-120px)] w-full">
         <div className="relative z-10 h-full w-full lg:pr-[360px]">
           <PlacesMap
             places={places}

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ThemeToggle } from '@/components/common/ThemeToggle'
+import { GlobalHeader } from '@/components/common/GlobalHeader'
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -28,29 +28,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <svg
-                className="h-5 w-5 text-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <span className="font-semibold text-lg">Медицинский Ассистент</span>
-          </div>
-          <ThemeToggle />
-        </div>
-      </header>
+      <GlobalHeader />
 
       {/* Main content */}
       <main className="container mx-auto max-w-5xl px-4 py-8 md:py-12 relative">

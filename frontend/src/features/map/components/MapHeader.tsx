@@ -1,6 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/cn'
 import { useMapStore } from '../state/mapStore'
 import { Search } from 'lucide-react'
@@ -17,24 +16,11 @@ export function MapHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-md">
+    <header className="sticky top-16 z-30 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center gap-4 px-4 py-3 md:px-6">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-            >
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Map</p>
-            <h1 className="text-lg font-semibold leading-5">Nearby</h1>
-          </div>
+        <div>
+          <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">Map</p>
+          <h1 className="text-lg font-semibold leading-5">Nearby</h1>
         </div>
 
         <ToggleGroup
@@ -71,16 +57,13 @@ export function MapHeader() {
           </ToggleGroupItem>
         </ToggleGroup>
 
-        <div className="ml-auto hidden flex-1 items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm md:flex">
+        <div className="ml-auto hidden min-w-[260px] items-center gap-2 rounded-xl border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm md:flex">
           <Search className="h-4 w-4 opacity-60" />
           <input
             className="w-full bg-transparent outline-none"
             placeholder="Search address (soon)"
             disabled
           />
-          <Button variant="secondary" size="sm" disabled>
-            Search
-          </Button>
         </div>
       </div>
     </header>
