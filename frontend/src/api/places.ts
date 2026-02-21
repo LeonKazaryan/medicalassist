@@ -23,6 +23,7 @@ export interface FetchPlacesParams {
   type: PlaceType
   bbox: BBox
   zoom: number
+  searchQuery?: string
 }
 
 // Note: backend expects Russian request param, so we map types here
@@ -31,11 +32,20 @@ const REQUEST_BY_TYPE: Record<PlaceType, string> = {
   clinic: 'клиника',
 }
 
-export async function fetchPlaces({ type, bbox, zoom: _zoom }: FetchPlacesParams): Promise<Place[]> {
+export async function fetchPlaces({
+  type,
+  bbox,
+  zoom: _zoom,
+  searchQuery
+}: FetchPlacesParams): Promise<Place[]> {
   const { center, radius } = bboxCenterAndRadiusMeters(bbox)
 
+  const requestValue = searchQuery && searchQuery.trim().length > 0
+    ? searchQuery.trim()
+    : (REQUEST_BY_TYPE[type] ?? 'аптека')
+
   const params = new URLSearchParams({
-    request: REQUEST_BY_TYPE[type] ?? 'аптека',
+    request: requestValue,
     lat: center.lat.toString(),
     lon: center.lon.toString(),
     radius: Math.round(radius).toString(),

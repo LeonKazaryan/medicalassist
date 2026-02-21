@@ -5,6 +5,7 @@ type GeolocationStatus = 'idle' | 'loading' | 'granted' | 'denied' | 'error'
 
 interface MapState {
   activeType: PlaceType
+  searchQuery: string
   autoRefresh: boolean
   selectedPlace: Place | null
   hoveredPlaceId: number | null
@@ -12,6 +13,7 @@ interface MapState {
   geolocationStatus: GeolocationStatus
   mapViewport: ViewportState
   setType: (type: PlaceType) => void
+  setSearchQuery: (query: string) => void
   setAutoRefresh: (value: boolean) => void
   setSelected: (place: Place | null) => void
   setHoveredId: (id: number | null) => void
@@ -28,13 +30,15 @@ const defaultViewport: ViewportState = {
 
 export const useMapStore = create<MapState>((set) => ({
   activeType: 'pharmacy',
+  searchQuery: '',
   autoRefresh: true,
   selectedPlace: null,
   hoveredPlaceId: null,
   userLocation: null,
   geolocationStatus: 'idle',
   mapViewport: defaultViewport,
-  setType: (type) => set({ activeType: type, selectedPlace: null }),
+  setType: (type) => set({ activeType: type, selectedPlace: null, searchQuery: '' }),
+  setSearchQuery: (query) => set({ searchQuery: query }),
   setAutoRefresh: (value) => set({ autoRefresh: value }),
   setSelected: (place) => set({ selectedPlace: place }),
   setHoveredId: (id) => set({ hoveredPlaceId: id }),

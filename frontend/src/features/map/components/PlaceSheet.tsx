@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MapHeader } from "./MapHeader";
 import { useMapStore } from "../state/mapStore";
 import { PLACE_LABELS } from "../utils/labels";
+import { Input } from "@/components/ui/input";
 
 interface PlaceSheetProps {
   places: Place[];
@@ -22,6 +23,7 @@ interface PlaceSheetProps {
 const sheetTransition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const };
 
 
+
 export function PlaceSheet({
   places,
   selectedPlace,
@@ -31,10 +33,51 @@ export function PlaceSheet({
   isError,
   sidebarControls,
 }: PlaceSheetProps) {
-  const activeType = useMapStore((state) => state.activeType);
+  const { activeType, searchQuery, setSearchQuery } = useMapStore((state) => ({
+    activeType: state.activeType,
+    searchQuery: state.searchQuery,
+    setSearchQuery: state.setSearchQuery,
+  }));
   const labels = PLACE_LABELS[activeType];
 
+  const renderSearchField = () => (
+    <AnimatePresence>
+      {activeType === "clinic" && !selectedPlace && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={sheetTransition}
+          className="overflow-hidden border-b bg-background"
+        >
+          <div className="p-4 pt-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Специализация (хирург, терапевт...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-11 rounded-xl bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary/50"
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full hover:bg-transparent text-muted-foreground hover:text-foreground"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   const renderContent = () => {
+    // ... rest of renderContent logic stays the same ...
     if (isLoading && places.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground animate-in fade-in duration-500">
@@ -170,6 +213,7 @@ export function PlaceSheet({
       <div className="fixed right-0 top-16 hidden h-[calc(100vh-64px)] w-[360px] border-l bg-background/95 shadow-2xl backdrop-blur-md lg:block z-20">
         <div className="flex h-full flex-col">
           <MapHeader />
+          {renderSearchField()}
 
           <div className="flex-1 overflow-hidden relative">
             <AnimatePresence mode="wait">

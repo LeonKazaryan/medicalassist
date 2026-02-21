@@ -18,6 +18,7 @@ function MapPage() {
   const [mapInstance, setMapInstance] = useState<Map | null>(null)
   const {
     activeType,
+    searchQuery,
     autoRefresh,
     selectedPlace,
     mapViewport,
@@ -26,6 +27,7 @@ function MapPage() {
     setViewport,
   } = useMapStore((state) => ({
     activeType: state.activeType,
+    searchQuery: state.searchQuery,
     autoRefresh: state.autoRefresh,
     selectedPlace: state.selectedPlace,
     mapViewport: state.mapViewport,
@@ -38,9 +40,11 @@ function MapPage() {
     useUserGeolocation()
 
   const debouncedViewport = useDebouncedValue(mapViewport, 400)
+  const debouncedSearch = useDebouncedValue(searchQuery, 500)
 
   const { data: places = [], isFetching, isError, refetch } = usePlacesQuery({
     type: activeType,
+    searchQuery: debouncedSearch,
     bbox: debouncedViewport.bbox,
     zoom: debouncedViewport.zoom || DEFAULT_ZOOM,
     autoRefresh,
@@ -91,7 +95,6 @@ function MapPage() {
           <PlacesMap
             places={places}
             selectedPlace={selectedPlace}
-            onSelect={setSelected}
             onViewportChange={handleViewportChange}
             userLocation={userLocation}
             onMapReady={setMapInstance}
