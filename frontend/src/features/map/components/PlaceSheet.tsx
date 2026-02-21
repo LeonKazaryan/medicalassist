@@ -9,8 +9,8 @@ import { MapHeader } from "./MapHeader";
 
 interface PlaceSheetProps {
   places: Place[];
-  selectedPlaceId: string | null;
-  onSelect: (id: string) => void;
+  selectedPlaceId: number | null;
+  onSelect: (id: number) => void;
   onClose: () => void;
   isLoading: boolean;
   isError: boolean;

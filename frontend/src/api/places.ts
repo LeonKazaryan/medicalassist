@@ -4,10 +4,10 @@ import { PLACES_BASE_URL } from '@/lib/config/constants'
 import type { BBox, Place, PlaceType } from '@/types/place'
 
 const placeSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   name: z.string(),
   lat: z.number(),
-  lng: z.number(),
+  lon: z.number(),
   address: z.string(),
   rating: z.number().nullable(),
   reviewsCount: z.number().nullable(),

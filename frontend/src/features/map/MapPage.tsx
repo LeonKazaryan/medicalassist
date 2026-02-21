@@ -74,7 +74,7 @@ function MapPage() {
     if (!mapInstance || !selectedPlace) return
     const isMobile = window.innerWidth < 1024
     const targetZoom = Math.max(mapInstance.getZoom(), 15)
-    mapInstance.flyTo([selectedPlace.lat, selectedPlace.lng], targetZoom, { duration: 0.4 })
+    mapInstance.flyTo([selectedPlace.lat, selectedPlace.lon], targetZoom, { duration: 0.4 })
     if (isMobile) {
       mapInstance.panBy([0, -120], { animate: true, duration: 0.25 })
     }

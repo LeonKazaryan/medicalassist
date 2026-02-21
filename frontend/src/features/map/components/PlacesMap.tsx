@@ -7,8 +7,8 @@ import { CLUSTER_RADIUS, DEFAULT_CENTER, DEFAULT_ZOOM, MAP_ATTRIBUTION, MAP_TILE
 
 interface PlacesMapProps {
   places: Place[]
-  selectedPlaceId: string | null
-  onSelect: (id: string) => void
+  selectedPlaceId: number | null
+  onSelect: (id: number) => void
   onViewportChange: (bbox: BBox, zoom: number) => void
   userLocation: { lat: number; lng: number } | null
   onMapReady?: (map: Map) => void
@@ -90,8 +90,8 @@ function ClusterLayer({
   onSelect,
 }: {
   places: Place[]
-  selectedPlaceId: string | null
-  onSelect: (id: string) => void
+  selectedPlaceId: number | null
+  onSelect: (id: number) => void
 }) {
   const map = useMap()
   const bounds = map.getBounds()
@@ -108,7 +108,7 @@ function ClusterLayer({
     },
     geometry: {
       type: 'Point' as const,
-      coordinates: [place.lng, place.lat],
+      coordinates: [place.lon, place.lat],
     },
   }))
 
@@ -148,11 +148,11 @@ function ClusterLayer({
           )
         }
 
-        const placeId = (feature.properties as any).placeId as string
+        const placeId = (feature.properties as any).placeId as number
         const isSelected = placeId === selectedPlaceId
         return (
           <Marker
-            key={placeId}
+            key={String(placeId)}
             position={[lat, lng]}
             icon={createPlaceIcon(isSelected)}
             eventHandlers={{
