@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://ep-flat-unit-ag0x1bwc-pooler.c-2.eu-central-1.aws.neon.tech:5432/neondb?sslmode=require
+    username: ${DB_USER:neondb_owner}
+    password: npg_PcZR9LKGa5Mz
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # create / update / validate / none (лучше validate)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  # если используешь Flyway/Liquibase — раскомментируй нужное:
+  # flyway:
+  #   enabled: true
+  # liquibase:
+  #   enabled: true
+
+server:
+  port: 8080

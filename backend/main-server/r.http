@@ -1,0 +1,3 @@
+GET /3.0/items?q=%D0%B0%D0%BF%D1%82%D0%B5%D0%BA%D0%B0&city_id=9570530755584001&key=f3a180d7-a6fb-485d-ab23-b52ff5b6063b&fields=items.point%2Citems.reviews&page_size=10&page=1 HTTP/1.1
+Host: catalog.api.2gis.com
+Accept: application/json

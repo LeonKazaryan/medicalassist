@@ -1,0 +1,4 @@
+org.example:main-server:jar:1.0-SNAPSHOT
++- org.springframework.boot:spring-boot-starter-web:jar:3.5.6:compile
+|  \- (org.springframework.boot:spring-boot-starter-tomcat:jar:3.5.6:compile - version managed from 3.5.6; omitted for duplicate)
+\- org.springframework.boot:spring-boot-starter-tomcat:jar:3.5.6:compile
