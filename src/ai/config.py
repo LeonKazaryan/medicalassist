@@ -8,4 +8,4 @@ MODEL_PATH = "./src/ai/models/multilingual-e5-small"
 DB_PATH = "./src/ai/vector_db"
 COLLECTION_NAME = "protocols"
 
-BASE_URL = "https://hub.qazcode.ai" 
+BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"

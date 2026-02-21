@@ -1,0 +1,210 @@
+{
+  "team": "Basar_Team_V8",
+  "metrics": {
+    "accuracy_at_1": 0.0,
+    "recall_at_3": 0.0,
+    "avg_latency": 64.49577808380127
+  },
+  "details": [
+    {
+      "file": "p_e44f3fc63c_652_17022026.json",
+      "gt": "F63.0",
+      "pred": [
+        "F00",
+        "F00",
+        "F00"
+      ],
+      "latency": 237.12
+    },
+    {
+      "file": "p_cb6a809d17_329_17022026.json",
+      "gt": "M35.0",
+      "pred": [
+        "J00",
+        "J00",
+        "T59.5"
+      ],
+      "latency": 55.45
+    },
+    {
+      "file": "p_5cc48b5115_142_17022026.json",
+      "gt": "Q81.2",
+      "pred": [
+        "Q80",
+        "Q80",
+        "B12"
+      ],
+      "latency": 64.55
+    },
+    {
+      "file": "p_b97d7afe88_97_17022026.json",
+      "gt": "J45.1",
+      "pred": [
+        "J86.0",
+        "B34.0",
+        "E59"
+      ],
+      "latency": 54.38
+    },
+    {
+      "file": "p_e334e054e4_953_17022026.json",
+      "gt": "G45.4",
+      "pred": [
+        "F05",
+        "F00",
+        "F00"
+      ],
+      "latency": 34.92
+    },
+    {
+      "file": "p_0092f99670_399_17022026.json",
+      "gt": "G93.6",
+      "pred": [
+        "Unknown",
+        "B19",
+        "Unknown"
+      ],
+      "latency": 59.91
+    },
+    {
+      "file": "p_78aea1ff55_629_17022026.json",
+      "gt": "S82.8",
+      "pred": [
+        "S82.1",
+        "D16",
+        "S82.1"
+      ],
+      "latency": 53.51
+    },
+    {
+      "file": "p_940f6ed830_937_17022026.json",
+      "gt": "O21.2",
+      "pred": [
+        "O21",
+        "O21",
+        "Unknown"
+      ],
+      "latency": 58.22
+    },
+    {
+      "file": "p_ea825edf9a_442_17022026.json",
+      "gt": "C53.8",
+      "pred": [
+        "N96",
+        "Unknown",
+        "Unknown"
+      ],
+      "latency": 55.97
+    },
+    {
+      "file": "p_c6de47c4ef_124_17022026.json",
+      "gt": "Z29.2",
+      "pred": [
+        "F10",
+        "G11",
+        "Unknown"
+      ],
+      "latency": 55.48
+    },
+    {
+      "file": "p_2f6fe2405e_196_17022026.json",
+      "gt": "Y45.1",
+      "pred": [
+        "T52",
+        "T52",
+        "I20"
+      ],
+      "latency": 53.35
+    },
+    {
+      "file": "p_d936f47a2d_950_17022026.json",
+      "gt": "S53.0",
+      "pred": [
+        "Unknown",
+        "A20",
+        "F84.2"
+      ],
+      "latency": 34.51
+    },
+    {
+      "file": "p_be66a7da90_1_17022026.json",
+      "gt": "I70.1",
+      "pred": [
+        "F00",
+        "T52",
+        "T52"
+      ],
+      "latency": 60.4
+    },
+    {
+      "file": "p_3f25483f10_191_17022026.json",
+      "gt": "D61.9",
+      "pred": [
+        "F10",
+        "Q20.3",
+        "Unknown"
+      ],
+      "latency": 67.55
+    },
+    {
+      "file": "p_9048521ede_469_17022026.json",
+      "gt": "D19.1",
+      "pred": [
+        "N73.6",
+        "F00.0",
+        "Unknown"
+      ],
+      "latency": 52.14
+    },
+    {
+      "file": "p_56131005a0_658_17022026.json",
+      "gt": "D72.8",
+      "pred": [
+        "K05.0",
+        "G01",
+        "Unknown"
+      ],
+      "latency": 56.36
+    },
+    {
+      "file": "p_24152a2ad2_213_17022026.json",
+      "gt": "C22.2",
+      "pred": [
+        "Unknown",
+        "Unknown",
+        "Unknown"
+      ],
+      "latency": 57.99
+    },
+    {
+      "file": "p_d519d85a64_472_17022026.json",
+      "gt": "F31.2",
+      "pred": [
+        "F00",
+        "B12",
+        "F10"
+      ],
+      "latency": 51.29
+    },
+    {
+      "file": "p_8f1f0576bc_767_17022026.json",
+      "gt": "D44.5",
+      "pred": [
+        "Unknown",
+        "S06.2",
+        "F05"
+      ],
+      "latency": 63.46
+    },
+    {
+      "file": "p_ba94a92c7b_209_17022026.json",
+      "gt": "Y07.1",
+      "pred": [
+        "F10",
+        "Unknown",
+        "F10"
+      ],
+      "latency": 63.37
+    }
+  ]
+}

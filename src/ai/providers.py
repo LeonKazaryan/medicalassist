@@ -7,7 +7,8 @@ class GPTOSSProvider:
             base_url=base_url,
             api_key=api_key
         )
-        self.model = "oss-120b"
+        self.model = "gemini-3-flash-preview"
+        
 
     async def get_diagnosis(self, symptoms: str, context: str = None):
         """
@@ -15,11 +16,14 @@ class GPTOSSProvider:
         context: найденные куски протоколов (пока можем тестить без них)
         """
         
-        system_prompt = (
-            "Ты — профессиональный медицинский ассистент, специализирующийся на клинических протоколах Республики Казахстан. "
-            "Твоя задача: проанализировать симптомы и сопоставить их с официальными рекомендациями. "
-            "Отвечай строго в формате JSON."
-        )
+        system_prompt = """
+            Ты — эксперт по кодированию МКБ-10. Твоя главная задача: выдать правильный код.
+
+        ПРАВИЛА:
+        1. В поле "icd_code" пиши ТОЛЬКО код (например, G91.1). 
+        2. Обязательно бери код из предоставленного контекста протоколов. Если в протоколе "ГИДРОЦЕФАЛИЯ" указан код G91.1 — пиши его!
+        3. Никогда не оставляй "icd_code" пустым или null.
+        """
 
         user_content = f"Симптомы пациента: {symptoms}\n\n"
         if context:
@@ -33,25 +37,46 @@ class GPTOSSProvider:
             "- confidence: число от 0 до 1 (твоя уверенность)"
         )
 
+        user_content += (
+            "Ответь в формате:\n"
+            "{\n"
+            "  \"diagnoses\": [\n"
+            "    {\"rank\": 1, \"icd_code\": \"код\", \"name\": \"название\", \"explanation\": \"почему подходит\"}\n"
+            "  ]\n"
+            "}"
+        )
+
         try:
+            # Если у тебя логика пула ключей, тут должно быть self.client (или diag_client)
+            # Я оставляю твой вызов, как он был
             response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content}
                 ],
-                temperature=0.2, # Низкая температура для стабильности
-                max_tokens=1500
+                temperature=0.1, # Низкая температура для стабильности
+                # УБРАЛИ response_format, так как он иногда ломает выдачу
             )
             
-            # Парсим JSON из ответа
             content = response.choices[0].message.content
-            # Иногда модели добавляют лишний текст вокруг JSON, чистим его
-            json_str = content.strip()
-            if "```json" in json_str:
-                json_str = json_str.split("```json")[1].split("```")[0].strip()
             
-            return json.loads(json_str)
+            # --- ТОЧЕЧНЫЙ ФИКС ПАРСИНГА ---
+            import re
+            # Ищем кусок текста, который начинается на { и заканчивается на }
+            match = re.search(r'\{[\s\S]*\}', content)
+            
+            if match:
+                json_str = match.group(0)
+                return json.loads(json_str)
+            else:
+                # Если регулярка не нашла скобки, пробуем твой старый метод как запасной
+                json_str = content.strip()
+                if "```json" in json_str:
+                    json_str = json_str.split("```json")[1].split("```")[0].strip()
+                return json.loads(json_str)
         
         except Exception as e:
-            return {"error": f"Ошибка при вызове Hub API: {str(e)}", "raw_response": content if 'content' in locals() else None}
+            # Возвращаем СТРОКУ или СЛОВАРЬ с ошибкой, чтобы main.py мог это поймать
+            print(f"❌ Ошибка LLM API: {str(e)}")
+            return {"error": f"Ошибка LLM: {str(e)}", "raw_response": content if 'content' in locals() else None}
