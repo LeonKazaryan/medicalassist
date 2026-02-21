@@ -1,0 +1,130 @@
+{
+  "team": "Basar_Team_V6",
+  "metrics": {
+    "accuracy_at_1": 0.0,
+    "recall_at_3": 0.0,
+    "avg_latency": 506.58421516418457
+  },
+  "details": [
+    {
+      "file": "p_5f323c012e_365_17022026.json",
+      "gt": "D46.2",
+      "pred": [],
+      "latency": 588.54
+    },
+    {
+      "file": "p_9d5e4ba27b_794_17022026.json",
+      "gt": "L10.1",
+      "pred": [],
+      "latency": 187.01
+    },
+    {
+      "file": "p_c6de47c4ef_124_17022026.json",
+      "gt": "Z29.2",
+      "pred": [],
+      "latency": 170.56
+    },
+    {
+      "file": "p_5b3c2d48a3_344_17022026.json",
+      "gt": "M51.0",
+      "pred": [],
+      "latency": 189.24
+    },
+    {
+      "file": "p_2de58f514a_482_17022026.json",
+      "gt": "G02.1",
+      "pred": [],
+      "latency": 202.1
+    },
+    {
+      "file": "p_cca51ff8c8_536_17022026.json",
+      "gt": "H91.2",
+      "pred": [],
+      "latency": 1099.12
+    },
+    {
+      "file": "p_ab705d816d_810_17022026.json",
+      "gt": "C44.3",
+      "pred": [],
+      "latency": 1517.31
+    },
+    {
+      "file": "p_e44f3fc63c_652_17022026.json",
+      "gt": "F63.0",
+      "pred": [],
+      "latency": 889.68
+    },
+    {
+      "file": "p_ef3eba065e_898_17022026.json",
+      "gt": "Q23.9",
+      "pred": [],
+      "latency": 372.42
+    },
+    {
+      "file": "p_247d698854_588_17022026.json",
+      "gt": "I01.0",
+      "pred": [],
+      "latency": 447.78
+    },
+    {
+      "file": "p_1ea3af5060_567_17022026.json",
+      "gt": "D35.3",
+      "pred": [],
+      "latency": 289.17
+    },
+    {
+      "file": "p_54c5c33979_693_17022026.json",
+      "gt": "I31.8",
+      "pred": [],
+      "latency": 293.04
+    },
+    {
+      "file": "p_2f7e45646e_1107_17022026.json",
+      "gt": "G40.4",
+      "pred": [],
+      "latency": 272.29
+    },
+    {
+      "file": "p_7c97aa1e0e_638_17022026.json",
+      "gt": "Z36.8",
+      "pred": [],
+      "latency": 1113.1
+    },
+    {
+      "file": "p_edb820c51d_433_17022026.json",
+      "gt": "Q62.2",
+      "pred": [],
+      "latency": 456.87
+    },
+    {
+      "file": "p_c1dfc0436f_527_17022026.json",
+      "gt": "I50.9",
+      "pred": [],
+      "latency": 289.35
+    },
+    {
+      "file": "p_9f62296f3c_960_17022026.json",
+      "gt": "K74.5",
+      "pred": [],
+      "latency": 441.08
+    },
+    {
+      "file": "p_6156c668c7_249_17022026.json",
+      "gt": "J02.9",
+      "pred": [],
+      "latency": 768.58
+    },
+    {
+      "file": "p_24152a2ad2_213_17022026.json",
+      "gt": "C22.2",
+      "pred": [],
+      "latency": 267.71
+    },
+    {
+      "file": "p_223d2f55dd_994_17022026.json",
+      "gt": "D81.0",
+      "pred": [],
+      "latency": 276.75
+    }
+  ]
+}
