@@ -1,7 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils/cn";
 import { useMapStore } from "../state/mapStore";
-import { toast } from "sonner";
 
 export function MapHeader() {
   const { activeType, setType } = useMapStore((state) => ({
