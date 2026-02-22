@@ -110,9 +110,12 @@ async def diagnose(request: DiagnosisRequest):
         context_parts = []
         for p in unique_protocols:
             payload = p.payload
+            # Рассчитываем релевантность для LLM (нормализуем скор, если нужно)
+            search_score = getattr(p, 'score', 0)
             context_parts.append(
                 f"ПРОТОКОЛ: {payload['title']}\n"
                 f"КОДЫ: {', '.join(payload['icd_codes'])}\n"
+                f"СКОР РЕЛЕВАНТНОСТИ ПОИСКА: {search_score:.4f}\n"
                 f"ТЕКСТ: {payload['content'][:1500]}"
             )
         context = "\n\n---\n\n".join(context_parts)
@@ -172,14 +175,21 @@ async def diagnose(request: DiagnosisRequest):
                 "rank": i + 1,
                 "icd_code": best_code,
                 "name": p.payload['title'],
-                "explanation": f"Диагноз подобран на основе семантического поиска РК: {p.payload['title']}."
+                "explanation": f"Диагноз подобран на основе семантического поиска РК (скор: {getattr(p, 'score', 0):.2f}).",
+                "confidence": 0.5 + (0.1 / (i + 1)) # Заглушка уверенности для фоллбека
             })
             
         # Если unique_protocols пустой (ошибка в поиске)
         if not fallback:
-             fallback = [{"rank": 1, "icd_code": "Unknown", "name": "Error", "explanation": "System Failure"}]
+             fallback = [{
+                 "rank": 1, 
+                 "icd_code": "Unknown", 
+                 "name": "Error", 
+                 "explanation": "System Failure",
+                 "confidence": 0.1
+             }]
              
-        return {"diagnoses": fallback, "confidence": 0.5}
+        return {"diagnoses": fallback, "overall_confidence": 0.5}
 
 
 if __name__ == "__main__":

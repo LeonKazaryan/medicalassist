@@ -33,16 +33,28 @@ class GPTOSSProvider:
 
         user_content += (
             "\n\nВерни JSON объект с полями:\n"
-            "- diagnoses: список из 3 объектов (rank, icd_code, name, explanation)\n"
-            "- confidence: число от 0 до 1 (твоя уверенность)"
+            "- diagnoses: список из 3 наиболее вероятных диагнозов. Для каждого укажи:\n"
+            "  - rank: порядковый номер (от 1 до 3)\n"
+            "  - icd_code: код МКБ-10\n"
+            "  - name: название диагноза\n"
+            "  - explanation: краткое обоснование\n"
+            "  - confidence: твоя уверенность в этом конкретном диагнозе (число от 0.1 до 1.0)\n"
+            "- overall_confidence: общая уверенность в ответе (число от 0.1 до 1.0)\n"
         )
 
         user_content += (
-            "Ответь в формате:\n"
+            "Ответь СТРОГО в формате JSON:\n"
             "{\n"
             "  \"diagnoses\": [\n"
-            "    {\"rank\": 1, \"icd_code\": \"код\", \"name\": \"название\", \"explanation\": \"почему подходит\"}\n"
-            "  ]\n"
+            "    {\n"
+            "      \"rank\": 1, \n"
+            "      \"icd_code\": \"G43.0\", \n"
+            "      \"name\": \"Мигрень без ауры\", \n"
+            "      \"explanation\": \"Описание...\",\n"
+            "      \"confidence\": 0.95\n"
+            "    }\n"
+            "  ],\n"
+            "  \"overall_confidence\": 0.9\n"
             "}"
         )
 
