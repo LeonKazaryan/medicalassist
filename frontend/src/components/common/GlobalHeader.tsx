@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { Compass, Map as MapIcon } from "lucide-react";
+import { Compass, Map as MapIcon, Clock } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 function usePathname() {
@@ -22,6 +22,7 @@ function usePathname() {
 export function GlobalHeader() {
   const path = usePathname();
   const isMap = path.startsWith("/map") || path.startsWith("/nearby");
+  const isHistory = path.startsWith("/history");
 
   const navButton = (href: string, label: string, Icon: typeof MapIcon) => (
     <Button
@@ -44,8 +45,9 @@ export function GlobalHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-10">
-        <div className="flex items-center gap-2">
+        <a href="/?reset=true" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            {/* ... SVG stay the same ... */}
             <svg
               className="h-5 w-5 text-primary"
               fill="none"
@@ -60,23 +62,36 @@ export function GlobalHeader() {
               />
             </svg>
           </div>
-          <span className="font-semibold text-lg">AI Medical Assistant</span>
-        </div>
+          <span className="font-semibold text-lg">AI Assistant</span>
+        </a>
 
         <div className="flex items-center gap-2">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={isMap ? "home" : "map"}
-              initial={{ opacity: 0, y: -6, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 6, scale: 0.96 }}
-              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="rounded-lg"
-            >
-              {isMap
-                ? navButton("/", "Главная", Compass)
-                : navButton("/map", "Карта", MapIcon)}
-            </motion.div>
+            <div className="flex items-center gap-2">
+              <motion.div
+                key={isMap ? "home-m" : "map"}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.18 }}
+              >
+                {isMap
+                  ? navButton("/?reset=true", "Главная", Compass)
+                  : navButton("/map", "Карта", MapIcon)}
+              </motion.div>
+              
+              <motion.div
+                 key={isHistory ? "home-h" : "history"}
+                 initial={{ opacity: 0, scale: 0.96 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 exit={{ opacity: 0, scale: 0.96 }}
+                 transition={{ duration: 0.18 }}
+              >
+                {isHistory
+                  ? navButton("/?reset=true", "Главная", Compass)
+                  : navButton("/history", "История", Clock)}
+              </motion.div>
+            </div>
           </AnimatePresence>
           <ThemeToggle />
         </div>

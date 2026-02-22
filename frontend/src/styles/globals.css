@@ -55,6 +55,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -70,11 +71,14 @@ body {
 
 /* Background grid pattern */
 .bg-grid {
-  background-image: 
-    linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
-    linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, hsl(var(--border) / 0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--border) / 0.2) 1px, transparent 1px);
   background-size: 2rem 2rem;
-  opacity: 0.3;
+}
+
+.bg-radial-gradient {
+  background: radial-gradient(circle at center, transparent 0%, hsl(var(--background)) 100%);
 }
 
 /* Glass effect */

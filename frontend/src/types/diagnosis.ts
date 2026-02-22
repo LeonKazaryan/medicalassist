@@ -19,6 +19,15 @@ export interface Diagnosis {
   explanation?: string
 }
 
+export interface HistoryEntry {
+  id: string
+  timestamp: number
+  request: IntakeRequest
+  diagnoses: Diagnosis[]
+  history: ConversationEntry[]
+  summarySpecialist: string
+}
+
 export interface ClarificationResponse {
   kind: 'clarify'
   question: string
@@ -44,5 +53,12 @@ export type SessionState =
   | { status: 'idle' }
   | { status: 'submitting'; data: IntakeRequest }
   | { status: 'clarifying'; data: IntakeRequest; question: string; history: ConversationEntry[] }
-  | { status: 'complete'; data: IntakeRequest; diagnoses: Diagnosis[]; history: ConversationEntry[] }
+  | {
+    status: 'complete'
+    data: IntakeRequest
+    diagnoses: Diagnosis[]
+    history: ConversationEntry[]
+    isHistorical?: boolean
+    timestamp?: number
+  }
   | { status: 'error'; error: string }

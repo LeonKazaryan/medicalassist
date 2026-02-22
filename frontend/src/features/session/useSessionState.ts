@@ -1,11 +1,13 @@
 import { useReducer, useEffect } from 'react'
-import type { SessionState, IntakeRequest, BackendResponse, ConversationEntry } from '@/types/diagnosis'
+import type { SessionState, IntakeRequest, BackendResponse, ConversationEntry, HistoryEntry } from '@/types/diagnosis'
+import { historyStore } from '../history/historyStore'
 
 type SessionAction =
   | { type: 'SUBMIT_INTAKE'; payload: IntakeRequest }
   | { type: 'RECEIVE_CLARIFICATION'; payload: { response: BackendResponse; request: IntakeRequest } }
   | { type: 'SUBMIT_ANSWER'; payload: { answer: string } }
   | { type: 'RECEIVE_RESULTS'; payload: { response: BackendResponse } }
+  | { type: 'LOAD_HISTORICAL'; payload: HistoryEntry }
   | { type: 'SET_ERROR'; payload: string }
   | { type: 'RESET' }
 
@@ -31,6 +33,7 @@ function sessionReducer(state: SessionState, action: SessionAction): SessionStat
           data: action.payload.request,
           diagnoses: action.payload.response.diagnoses,
           history: [],
+          timestamp: Date.now(),
         }
       }
 
@@ -64,10 +67,21 @@ function sessionReducer(state: SessionState, action: SessionAction): SessionStat
             data: state.data,
             diagnoses: action.payload.response.diagnoses,
             history: state.status === 'clarifying' ? state.history : [],
+            timestamp: Date.now(),
           }
         }
       }
       return state
+
+    case 'LOAD_HISTORICAL':
+      return {
+        status: 'complete',
+        data: action.payload.request,
+        diagnoses: action.payload.diagnoses,
+        history: action.payload.history,
+        isHistorical: true,
+        timestamp: action.payload.timestamp,
+      }
 
     case 'SET_ERROR':
       return {
@@ -86,7 +100,26 @@ function sessionReducer(state: SessionState, action: SessionAction): SessionStat
 const STORAGE_KEY = 'medical_diagnosis_session'
 
 export function useSessionState() {
-  const [state, dispatch] = useReducer(sessionReducer, { status: 'idle' })
+  const [state, dispatch] = useReducer(sessionReducer, { status: 'idle' }, (initial) => {
+    if (typeof window === 'undefined') return initial
+
+    // Check for reset flag in URL
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('reset') === 'true') {
+      localStorage.removeItem(STORAGE_KEY)
+      return initial
+    }
+
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch {
+        return initial
+      }
+    }
+    return initial
+  })
 
   // Persist to localStorage
   useEffect(() => {
@@ -94,6 +127,20 @@ export function useSessionState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } else {
       localStorage.removeItem(STORAGE_KEY)
+    }
+  }, [state])
+
+  // Save to history when completing a NEW session
+  useEffect(() => {
+    if (state.status === 'complete' && !state.isHistorical) {
+      const entries = historyStore.getEntries()
+      const timestamp = state.timestamp
+
+      const alreadySaved = entries.some(e => e.timestamp === timestamp)
+
+      if (!alreadySaved && timestamp) {
+        historyStore.saveEntry(state.data, state.diagnoses, state.history, timestamp)
+      }
     }
   }, [state])
 

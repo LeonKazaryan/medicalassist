@@ -11,6 +11,7 @@ import './styles/map.css'
 const pathname = window.location.pathname
 const isSwaggerRoute = pathname.startsWith('/swagger')
 const isMapRoute = pathname.startsWith('/map') || pathname.startsWith('/nearby')
+const isHistoryRoute = pathname.startsWith('/history')
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -18,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <TwoGisSwagger />
     ) : (
       <Providers>
-        {isMapRoute ? <MapPage /> : <App />}
+        {isMapRoute ? <MapPage /> : <App isHistory={isHistoryRoute} />}
       </Providers>
     )}
   </React.StrictMode>,
