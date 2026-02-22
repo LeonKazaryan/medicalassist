@@ -1,0 +1,11 @@
+{
+  "submission_name": "Basar_Official_Test",
+  "total_protocols": 19,
+  "accuracy_at_1_percent": 5.26,
+  "recall_at_3_percent": 21.05,
+  "latency_avg_s": 38.235,
+  "latency_min_s": 27.394,
+  "latency_max_s": 55.597,
+  "latency_p50_s": 37.408,
+  "latency_p95_s": 55.597
+}
