@@ -62,7 +62,7 @@ export function GlobalHeader() {
               />
             </svg>
           </div>
-          <span className="font-semibold text-lg">AI Assistant</span>
+          <span className="font-semibold text-lg">Medical AI Assistant</span>
         </a>
 
         <div className="flex items-center gap-2">

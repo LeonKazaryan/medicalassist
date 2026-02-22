@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { MapPin, ArrowRight, Loader2, Check } from 'lucide-react'
+import { MapPin, Loader2, Check } from 'lucide-react'
 import { getSpecialistFromICD } from '@/lib/config/constants'
 
 interface RecommendedDoctorCardProps {
@@ -70,9 +70,6 @@ export function RecommendedDoctorCard({ icdCode, diagnosisTitle, onFindDoctor }:
             )}
           </Button>
           
-          <Button variant="ghost" size="sm" className="w-full text-muted-foreground hover:text-primary transition-colors">
-            Показать всех специалистов <ArrowRight className="ml-1 h-3 w-3" />
-          </Button>
         </div>
 
         <AnimatePresence>

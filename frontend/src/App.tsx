@@ -174,6 +174,14 @@ function App({ isHistory: isInitialHistory = false }: AppProps) {
         </AnimatePresence>
       </main>
 
+      <footer className="mt-20 py-8 border-t bg-background/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground/60 transition-colors hover:text-muted-foreground">
+            Медицинский AI-ассистент для диагностики на основе протоколов Казахстана
+          </p>
+        </div>
+      </footer>
+
       <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <DialogContent className="rounded-2xl border-white/10 bg-background/95 backdrop-blur-xl shadow-2xl">
           <DialogHeader>
