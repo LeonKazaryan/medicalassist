@@ -20,6 +20,8 @@ async function submitIntake(payload: IntakeRequest): Promise<BackendResponse> {
   // The new AI endpoint returns { "diagnoses": [...] }
   // We map it to our ResultResponse format
   const data = response.data
+  console.log('DEBUG: AI Raw Response:', data)
+
   return {
     kind: 'result',
     diagnoses: data.diagnoses.map((d: any) => ({
@@ -30,6 +32,7 @@ async function submitIntake(payload: IntakeRequest): Promise<BackendResponse> {
       question: d.question,
     })),
   } as BackendResponse
+
 }
 
 async function submitClarification(payload: {
@@ -52,6 +55,8 @@ async function submitClarification(payload: {
   })
 
   const data = response.data
+  console.log('DEBUG: AI Raw Response (Clarification):', data)
+
   return {
     kind: 'result',
     diagnoses: data.diagnoses.map((d: any) => ({
@@ -62,6 +67,7 @@ async function submitClarification(payload: {
       question: d.question,
     })),
   } as BackendResponse
+
 }
 
 export function useSubmitIntake() {
