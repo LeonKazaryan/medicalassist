@@ -87,15 +87,15 @@ function App({ isHistory: isInitialHistory = false }: AppProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
       {/* Background grid pattern */}
       <div className="absolute inset-0 bg-grid z-0" />
       <div className="absolute inset-0 bg-radial-gradient z-0 opacity-60" />
       
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col min-h-screen">
         <GlobalHeader />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1 w-full">
         <AnimatePresence mode="wait">
           {view === 'history' ? (
             <HistoryPage 
@@ -174,7 +174,7 @@ function App({ isHistory: isInitialHistory = false }: AppProps) {
         </AnimatePresence>
       </main>
 
-      <footer className="mt-20 py-8 border-t bg-background/50 backdrop-blur-sm">
+      <footer className="mt-auto py-8 border-t bg-background/70 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground/60 transition-colors hover:text-muted-foreground">
             Медицинский AI-ассистент для диагностики на основе протоколов Казахстана
