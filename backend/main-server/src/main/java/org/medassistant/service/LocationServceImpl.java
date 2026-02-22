@@ -7,6 +7,7 @@ import org.medassistant.repository.LocationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,6 +40,7 @@ public class LocationServceImpl implements LocationService {
                 nearLocations.add(location);
             }
         }
+        nearLocations.sort(Comparator.comparing(LocationDto::getRating).reversed());
         return nearLocations;
     }
 }
