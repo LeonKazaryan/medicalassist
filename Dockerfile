@@ -19,8 +19,8 @@ RUN pip install uv && uv sync --frozen
 COPY src/ ./src/
 COPY processed_protocols.json ./
 COPY setup_models.py ./
-COPY .env.example ./.env 
-# ВАЖНО: .env копируем как заглушку, реальные ключи жюри прокинет через docker run -e
+RUN touch .env
+# ВАЖНО: .env создаем как заглушку, реальные ключи жюри прокинет через docker run -e
 
 # --- СТАДИЯ СБОРКИ (BUILD TIME) ---
 

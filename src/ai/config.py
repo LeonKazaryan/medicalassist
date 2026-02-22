@@ -8,4 +8,6 @@ MODEL_PATH = "./src/ai/models/multilingual-e5-small"
 DB_PATH = "./src/ai/vector_db"
 COLLECTION_NAME = "protocols"
 
-BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+# Use the environment variable for the base URL, defaulting to the one provided by the user
+# Added /v1 as it is commonly required for OpenAI-compatible APIs
+BASE_URL = os.getenv("GPT_OSS_BASE_URL", "https://hub.qazcode.ai/v1")

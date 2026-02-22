@@ -7,8 +7,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
-from providers import GPTOSSProvider
-from config import GPT_OSS_API_KEY, MODEL_PATH, DB_PATH, COLLECTION_NAME, BASE_URL
+from .providers import GPTOSSProvider
+from .config import GPT_OSS_API_KEY, MODEL_PATH, DB_PATH, COLLECTION_NAME, BASE_URL
 
 app = FastAPI(title="QazCode Medical AI - Dual RAG")
 
