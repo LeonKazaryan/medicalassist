@@ -1,11 +1,20 @@
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
+import { SEX_LABELS } from '@/lib/config/constants'
 import type { IntakeRequest, BackendResponse } from '@/types/diagnosis'
 
 async function submitIntake(payload: IntakeRequest): Promise<BackendResponse> {
-  // We only send the user_prompt as "text" to the new AI endpoint
+  // We append sex and age to the prompt
+  let text = payload.user_prompt
+  if (payload.sex !== null && payload.sex !== undefined) {
+    text += `, пол: ${SEX_LABELS[payload.sex as keyof typeof SEX_LABELS]}`
+  }
+  if (payload.age !== null && payload.age !== undefined) {
+    text += `, возраст: ${payload.age}`
+  }
+
   const response = await axios.post('/diagnose', {
-    text: payload.user_prompt,
+    text: text,
   })
 
   // The new AI endpoint returns { "diagnoses": [...] }
@@ -24,17 +33,22 @@ async function submitIntake(payload: IntakeRequest): Promise<BackendResponse> {
 }
 
 async function submitClarification(payload: {
-  sex: string
+  sex?: string | null
   age?: number | null
   user_prompt: string
   question: string
   answer: string
 }): Promise<BackendResponse> {
-  // If the new AI endpoint supports clarification, we'd send it here.
-  // For now, we just resend the prompt or treated as a new diagnosis request.
-  // Given the user request, it seems they want the basic diagnosis working first.
+  let text = `${payload.user_prompt}. Дополнительная информация: ${payload.answer}`
+  if (payload.sex !== null && payload.sex !== undefined) {
+    text += `, пол: ${SEX_LABELS[payload.sex as keyof typeof SEX_LABELS]}`
+  }
+  if (payload.age !== null && payload.age !== undefined) {
+    text += `, возраст: ${payload.age}`
+  }
+
   const response = await axios.post('/diagnose', {
-    text: `${payload.user_prompt}. Дополнительная информация: ${payload.answer}`,
+    text: text,
   })
 
   const data = response.data

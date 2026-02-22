@@ -12,8 +12,8 @@ interface AgeSelectorProps {
 }
 
 export function AgeSelector({ value, onChange }: AgeSelectorProps) {
-  const [isExpanded, setIsExpanded] = useState(!!value)
-  const currentValue = value || 35
+  const [isExpanded, setIsExpanded] = useState(value !== null && value !== undefined)
+  const currentValue = value ?? 35
 
   const handleSliderChange = (values: number[]) => {
     onChange(values[0])
@@ -28,13 +28,25 @@ export function AgeSelector({ value, onChange }: AgeSelectorProps) {
     }
   }
 
+  const handleToggle = () => {
+    const nextExpanded = !isExpanded
+    setIsExpanded(nextExpanded)
+    if (nextExpanded) {
+      if (value === null || value === undefined) {
+        onChange(35)
+      }
+    } else {
+      onChange(null)
+    }
+  }
+
   return (
     <div className="space-y-3">
       <Button
         type="button"
         variant="ghost"
         className="w-full justify-between p-0 h-auto font-medium hover:bg-transparent"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleToggle}
       >
         <Label className="text-sm font-medium flex items-center gap-2 cursor-pointer">
           <Calendar className="h-4 w-4" />

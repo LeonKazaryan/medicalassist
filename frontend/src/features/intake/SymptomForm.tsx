@@ -36,7 +36,7 @@ export function SymptomForm({ onSubmit, isLoading }: SymptomFormProps) {
   const userPrompt = watch('user_prompt')
   
   const charCount = userPrompt?.length || 0
-  const isValid = !errors.user_prompt && charCount >= 10 && sex
+  const isValid = !errors.user_prompt && charCount >= 10
 
   return (
     <div className="flex justify-center items-start min-h-[60vh]">

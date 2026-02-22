@@ -1,7 +1,7 @@
 export type Sex = 'male' | 'female'
 
 export interface IntakeRequest {
-  sex: Sex
+  sex?: Sex | null
   age?: number | null
   user_prompt: string
 }
@@ -40,7 +40,7 @@ export interface ConversationEntry {
   timestamp: number
 }
 
-export type SessionState = 
+export type SessionState =
   | { status: 'idle' }
   | { status: 'submitting'; data: IntakeRequest }
   | { status: 'clarifying'; data: IntakeRequest; question: string; history: ConversationEntry[] }

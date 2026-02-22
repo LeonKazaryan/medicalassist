@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const intakeRequestSchema = z.object({
-  sex: z.enum(['male', 'female']),
+  sex: z.enum(['male', 'female']).optional().nullable(),
   age: z.number().int().min(0).max(120).nullable().optional(),
   user_prompt: z.string().min(10).max(2000),
 })

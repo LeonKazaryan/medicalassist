@@ -5,8 +5,8 @@ import { SEX_LABELS } from '@/lib/config/constants'
 import { User } from 'lucide-react'
 
 interface SexSelectorProps {
-  value?: Sex
-  onChange: (value: Sex) => void
+  value?: Sex | null
+  onChange: (value: Sex | null) => void
   error?: string
 }
 
@@ -16,12 +16,11 @@ export function SexSelector({ value, onChange, error }: SexSelectorProps) {
       <Label className="text-sm font-medium flex items-center gap-2">
         <User className="h-4 w-4" />
         Пол
-        <span className="text-destructive">*</span>
       </Label>
       <ToggleGroup
         type="single"
-        value={value}
-        onValueChange={(val) => val && onChange(val as Sex)}
+        value={value || undefined}
+        onValueChange={(val) => onChange((val as Sex) || null)}
         className="justify-start gap-2"
       >
         <ToggleGroupItem
