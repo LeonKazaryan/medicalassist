@@ -3,7 +3,7 @@ import uvicorn
 import re
 import json
 import asyncio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
@@ -23,8 +23,6 @@ async def startup_event():
     llm = GPTOSSProvider(GPT_OSS_API_KEY, BASE_URL)
     print("✅ Система готова.")
 
-class DiagnosisRequest(BaseModel):
-    text: str
 
 async def get_clinical_keywords(user_text: str):
     prompt = (
@@ -54,10 +52,14 @@ async def get_clinical_keywords(user_text: str):
         return user_text
 
 @app.post("/diagnose")
-async def diagnose(request: DiagnosisRequest):
+async def diagnose(request: Request):
     unique_protocols = [] # Инициализация для Fallback
     try:
-        query_text_raw = request.text
+        body = await request.json()
+        print(f"📥 Пришло в запросе: {body}") 
+        
+        # Вытаскиваем симптомы из любого возможного поля
+        query_text_raw = body.get("symptoms") or body.get("text") or body.get("query")
         print(f"\n📥 Вход: {query_text_raw[:100]}...")
         
         # 1. ШАГ: Извлекаем клинические термины (Medical Summary)
@@ -145,6 +147,8 @@ async def diagnose(request: DiagnosisRequest):
                             best_code = specific_codes[0] if specific_codes else codes[-1]
                         
                         d["icd_code"] = best_code
+                        d["icd10_code"] = best_code
+                    d["icd10_code"] = d["icd_code"]
                 
                 print("✅ LLM ответила успешно!")
                 return result
@@ -171,6 +175,7 @@ async def diagnose(request: DiagnosisRequest):
             fallback.append({
                 "rank": i + 1,
                 "icd_code": best_code,
+                "icd10_code": best_code,
                 "name": p.payload['title'],
                 "explanation": f"Диагноз подобран на основе семантического поиска РК: {p.payload['title']}."
             })

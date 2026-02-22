@@ -7,7 +7,7 @@ class GPTOSSProvider:
             base_url=base_url,
             api_key=api_key
         )
-        self.model = "gemini-3-flash-preview"
+        self.model = "oss-120b"
         
 
     async def get_diagnosis(self, symptoms: str, context: str = None):

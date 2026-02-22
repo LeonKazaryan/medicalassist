@@ -11,7 +11,7 @@ def run_evaluation(endpoint, data_dir, team_name):
     test_files = list(data_path.glob("*.json"))
 
     random.shuffle(test_files)
-    test_files = test_files[:10]
+    test_files = test_files[:20]
     
     if not test_files:
         print(f"❌ Ошибка: В директории {data_dir} не найдено JSON файлов.")

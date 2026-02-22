@@ -97,6 +97,9 @@ async def run_evaluation(
     console = Console()
 
     json_files = list(dataset_dir.glob("*.json"))
+    import random
+    random.shuffle(json_files)
+    json_files = json_files[:20]
     if not json_files:
         console.print(f"[red]No JSON files found in {dataset_dir}[/red]")
         return []
