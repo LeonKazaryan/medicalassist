@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Map } from 'leaflet'
 import { toast } from 'sonner'
-import { AlertTriangle } from 'lucide-react'
+import { ArrowLeft, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { GlobalHeader } from '@/components/common/GlobalHeader'
 import { MapControls } from './components/MapControls'
 import { PlaceSheet } from './components/PlaceSheet'
@@ -80,6 +81,23 @@ function MapPage() {
   }, [selectedPlace, mapInstance])
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const specialist = params.get('specialist')
+    if (specialist) {
+      useMapStore.getState().setType('clinic')
+      useMapStore.getState().setSearchQuery(specialist)
+      toast.success(`Поиск врача: ${specialist}`, {
+        icon: '🔍',
+      })
+      // Clear params to avoid re-triggering
+      const url = new URL(window.location.href)
+      url.searchParams.delete('specialist')
+      url.searchParams.delete('tab')
+      window.history.replaceState({}, '', url)
+    }
+  }, [])
+
+  useEffect(() => {
     if (geoError) {
       toast.error(geoError)
     }
@@ -90,6 +108,19 @@ function MapPage() {
   return (
     <div className="relative min-h-screen bg-background">
       <GlobalHeader />
+      {/* Back button overlay if redirected from diagnostic results */}
+      {window.location.search.includes('specialist') && (
+        <div className="absolute left-4 top-20 z-[40]">
+           <Button 
+            variant="secondary" 
+            className="shadow-lg backdrop-blur-md bg-background/80 hover:bg-background border-none flex items-center gap-2"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            К результатам
+          </Button>
+        </div>
+      )}
       <div className="relative flex h-[calc(100vh-64px)] w-full">
         <div className="relative z-10 h-full w-full lg:pr-[360px]">
           <PlacesMap

@@ -161,12 +161,19 @@ function ClusterLayer({
         const placeId = props.placeId as number
         const isSelected = placeId === selectedPlace?.id
         const isHovered = placeId === hoveredPlaceId
+        
+        // Check if this place matches the current specialist filter
+        const currentSearch = useMapStore.getState().searchQuery
+        const isFiltered = !!currentSearch && (
+          props.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          props.address.toLowerCase().includes(currentSearch.toLowerCase())
+        )
 
         return (
           <Marker
             key={String(placeId)}
             position={[lat, lng]}
-            icon={createPlaceIcon(isSelected, isHovered)}
+            icon={createPlaceIcon(isSelected, isHovered, isFiltered)}
             eventHandlers={{
               click: (e) => {
                 console.log('Marker clicked:', placeId);
@@ -235,13 +242,13 @@ function createClusterIcon(count: number) {
   })
 }
 
-function createPlaceIcon(selected: boolean, hovered: boolean) {
+function createPlaceIcon(selected: boolean, hovered: boolean, filtered: boolean = false) {
   const base = `
     <div class="relative flex items-center justify-center" style="width: 40px; height: 40px;">
-      <div class="rounded-full bg-white shadow-xl p-[6px] border-2 ${selected ? 'border-primary' : 'border-background'} ${hovered ? 'marker-hover-glow marker-bounce' : ''} transition-all duration-300">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${selected || hovered ? '#0ea5e9' : '#0f172a'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="rounded-full bg-white shadow-xl p-[6px] border-2 ${selected ? 'border-primary' : 'border-background'} ${hovered ? 'marker-hover-glow marker-bounce' : ''} ${filtered ? 'marker-filtered-pulse' : ''} transition-all duration-300">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${selected || hovered || filtered ? '#0ea5e9' : '#0f172a'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 21c-4-4.5-6-7.5-6-10a6 6 0 1 1 12 0c0 2.5-2 5.5-6 10z"/>
-          <circle cx="12" cy="11" r="2.5" ${selected || hovered ? 'fill="#0ea5e9" opacity="0.15"' : ''}/>
+          <circle cx="12" cy="11" r="2.5" ${selected || hovered || filtered ? 'fill="#0ea5e9" opacity="0.15"' : ''}/>
         </svg>
       </div>
     </div>

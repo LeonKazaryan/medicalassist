@@ -102,3 +102,21 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+.marker-filtered-pulse {
+  animation: filtered-pulse 2s infinite;
+}
+
+@keyframes filtered-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 15px rgba(14, 165, 233, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+  }
+}

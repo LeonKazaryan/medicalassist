@@ -7,7 +7,7 @@ import { QuestionCard } from './QuestionCard'
 import type { Sex, ConversationEntry } from '@/types/diagnosis'
 
 interface ClarificationViewProps {
-  sex: Sex
+  sex?: Sex | null
   age?: number | null
   question: string
   history: ConversationEntry[]

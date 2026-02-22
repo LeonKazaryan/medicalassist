@@ -108,7 +108,7 @@ function App() {
 
         {state.status === 'clarifying' && (
           <ClarificationView
-            sex={state.data.sex}
+            sex={state.data.sex || undefined}
             age={state.data.age}
             question={state.question}
             history={state.history}
@@ -119,7 +119,10 @@ function App() {
         )}
 
         {state.status === 'complete' && (
-          <ResultsView diagnoses={state.diagnoses} />
+          <ResultsView 
+            diagnoses={state.diagnoses} 
+            onReset={() => setShowResetDialog(true)} 
+          />
         )}
 
         {state.status === 'error' && (

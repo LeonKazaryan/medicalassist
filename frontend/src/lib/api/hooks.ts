@@ -23,9 +23,9 @@ async function submitIntake(payload: IntakeRequest): Promise<BackendResponse> {
   return {
     kind: 'result',
     diagnoses: data.diagnoses.map((d: any) => ({
-      name: d.name || d.icd10_code, // fallback if name is missing
-      confidence: d.confidence ?? (1 / (d.rank || 1)), // synthetic confidence if missing
-      icd10_code: d.icd10_code,
+      name: d.name || d.icd_code || 'Неизвестно',
+      confidence: d.confidence ?? (1 / (d.rank || 1)),
+      icd10_code: d.icd_code || d.icd10_code,
       explanation: d.explanation,
       question: d.question,
     })),
@@ -55,9 +55,9 @@ async function submitClarification(payload: {
   return {
     kind: 'result',
     diagnoses: data.diagnoses.map((d: any) => ({
-      name: d.name || d.icd10_code,
+      name: d.name || d.icd_code || 'Неизвестно',
       confidence: d.confidence ?? (1 / (d.rank || 1)),
-      icd10_code: d.icd10_code,
+      icd10_code: d.icd_code || d.icd10_code,
       explanation: d.explanation,
       question: d.question,
     })),
