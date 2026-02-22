@@ -11,7 +11,7 @@ Our solution uses a **multi-stage reasoning pipeline** designed to bridge the ga
 ### 🏗 Architecture Breakdown
 
 #### 1. Input Processing & Clinical NER
-The user's raw text is processed by an LLM (**Gemini 1.5 Flash**) to extract specific clinical entities (symptoms, duration, negations).
+The user's raw text is processed by an LLM (**Gemini 3 Flash Preview**) to extract specific clinical entities (symptoms, duration, negations).
 *   **Goal:** Transform *"my tummy hurts on the right"* $\to$ `"abdominal pain, right upper quadrant, acute onset"`.
 
 #### 2. Dual-Path Retrieval (Hybrid Search)
@@ -70,8 +70,7 @@ Search results are re-ranked based on a custom scoring algorithm:
 3.  **Setup Environment:**
     Create a `.env` file in the root directory:
     ```text
-    GEMINI_API_KEY_1=your_key_here
-    GEMINI_API_KEY_2=your_key_here
+    GPT_OSS_API_KEY=your_key_here
     ```
 
 ### Running the System
