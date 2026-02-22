@@ -1,17 +1,28 @@
-version: '3.5'
-
 services:
-  postgres:
-    container_name: medical-assistant
-    image: postgres:12.2
-    environment:
-      POSTGRES_USER: "medical"
-      POSTGRES_PASSWORD: "medical"
-      POSTGRES_DB: "clinics"
-      PGDATA: /data/postgres
-    volumes:
-      - ./volumes/postgres/data:/data/postgres
-      - ./volumes/postgres/logs:/logs
+  ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5435:5432"
+      - "8000:8000"
+    environment:
+      - DB_PATH=./src/ai/vector_db/qdrant.db
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend/main-server
+    ports:
+      - "8081:8080"
+    # Теперь бэкенд будет брать настройки из application.yml
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+      - ai
     restart: unless-stopped
